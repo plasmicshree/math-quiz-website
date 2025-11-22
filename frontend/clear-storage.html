@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear LocalStorage</title>
+</head>
+<body>
+    <h1>Clearing LocalStorage...</h1>
+    <p id="status">Clearing...</p>
+    
+    <script>
+        // Clear all localStorage
+        localStorage.clear();
+        
+        // Verify it's cleared
+        const itemCount = localStorage.length;
+        const status = document.getElementById('status');
+        
+        if (itemCount === 0) {
+            status.textContent = '✓ LocalStorage cleared successfully!';
+            status.style.color = 'green';
+        } else {
+            status.textContent = '✗ LocalStorage still has ' + itemCount + ' items';
+            status.style.color = 'red';
+        }
+        
+        // Redirect to main app after 2 seconds
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 2000);
+    </script>
+</body>
+</html>

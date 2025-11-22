@@ -5,13 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Math Quiz</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Firebase SDK - using compat version for compatibility -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
+    <!-- Name Input Modal -->
+    <div id="name-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h1>Welcome to Math Quiz! 🎓</h1>
+            <p>Let's get to know you!</p>
+            <input type="text" id="name-input" placeholder="Enter your name..." autocomplete="name">
+            <input type="email" id="email-input" placeholder="Enter your email..." autocomplete="email">
+            <button id="name-submit-btn">Start Quiz</button>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div id="history-modal" class="modal-overlay hidden">
+        <div class="modal-content history-modal-content">
+            <h1>📊 Session History</h1>
+            <div id="history-list" class="history-list">
+                <p>Loading...</p>
+            </div>
+            <button id="close-history-btn" class="modal-close-btn">Close</button>
+        </div>
+    </div>
+
     <div class="main-layout three-col-layout">
         <div class="sidebar left-sidebar">
-            <div class="grade-selector">
+            <div class="name-display">
+                <div id="user-name-display">User</div>
+                <button id="change-name-btn" class="small-btn">✎ Change Name</button>
+            </div>
+            <div class="grade-selector disabled-overlay" id="grade-selector-container">
                 <label for="grade-select"><strong>Select Your Grade</strong></label>
-                <select id="grade-select">
+                <select id="grade-select" disabled>
                     <option value="" disabled selected>Choose Grade...</option>
                     <option value="1">Grade 1</option>
                     <option value="2">Grade 2</option>
@@ -22,7 +51,7 @@
                 </select>
             </div>
             <div class="score-tile disabled-overlay">
-                <div class="score-title">Sashwat's Score</div>
+                <div class="score-title"><span id="score-title-name">User</span>'s Score</div>
                 <div id="score-value">0</div>
             </div>
             <label for="section-select" class="disabled-overlay"><strong>Math Section</strong></label>
@@ -34,6 +63,10 @@
                 <option value="fractions">Fractions</option>
                 <option value="charts">Graphs</option>
             </select>
+            <div class="session-controls">
+                <button id="save-session-btn" class="session-btn disabled-overlay" disabled>💾 Save Session</button>
+                <button id="view-history-btn" class="session-btn disabled-overlay" disabled>📊 View History</button>
+            </div>
         </div>
         <div class="center-section disabled-overlay">
             <div class="container quiz-main">

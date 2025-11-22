@@ -1,11 +1,217 @@
+// Initialize Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyCfAwDRE9JJFhW_j6_hg3wIp0oIX6c5-M0",
+  authDomain: "math-app-d6f00.firebaseapp.com",
+  projectId: "math-app-d6f00",
+  storageBucket: "math-app-d6f00.appspot.com",
+  messagingSenderId: "333699287838",
+  appId: "1:333699287838:web:343907f2b4ebe2ce6a170f"
+};
+
+let db = null;
+
+if (typeof firebase !== 'undefined') {
+  try {
+    firebase.initializeApp(firebaseConfig);
+    console.log('✓ Firebase initialized successfully');
+    db = firebase.firestore();
+    console.log('✓ Firestore instance created');
+  } catch (error) {
+    console.error('✗ Firebase initialization error:', error);
+  }
+} else {
+  console.error('✗ Firebase SDK not loaded - check script includes');
+}
+
+// Session tracking
+let currentSessionId = null;
+let currentSessionData = {
+  userName: '',
+  grade: null,
+  section: '',
+  questions: [],
+  totalScore: 0,
+  startTime: null,
+  endTime: null
+};
+
+// Function to create a new session
+function startNewSession(userName, grade, section) {
+  currentSessionId = generateUUID();
+  currentSessionData = {
+    sessionId: currentSessionId,
+    userName: userName,
+    grade: grade,
+    section: section,
+    questions: [],
+    totalScore: 0,
+    startTime: new Date(),
+    endTime: null
+  };
+}
+
+// Function to add question to session
+function addQuestionToSession(question, userAnswer, correctAnswer, correct, pointsEarned) {
+  currentSessionData.questions.push({
+    question: question,
+    userAnswer: userAnswer,
+    correctAnswer: correctAnswer,
+    correct: correct,
+    pointsEarned: pointsEarned,
+    timestamp: new Date()
+  });
+}
+
+// Function to save session to Firestore (with localStorage fallback)
+async function saveSessionToFirebase() {
+  if (!currentSessionId) return;
+  
+  const userEmail = localStorage.getItem('mathQuizUserEmail');
+  if (!userEmail) {
+    console.error('[FIREBASE] User email not found in localStorage');
+    // Save to localStorage as fallback
+    saveSessionToLocalStorage(userEmail);
+    return;
+  }
+  
+  try {
+    currentSessionData.endTime = new Date();
+    currentSessionData.totalScore = currentSessionData.questions.reduce((sum, q) => sum + (q.pointsEarned || 0), 0);
+    
+    console.log('[FIREBASE] Saving session with email:', userEmail);
+    console.log('[FIREBASE] Session data:', currentSessionData);
+    
+    if (!db) {
+      console.warn('[FIREBASE] Firebase not initialized, using localStorage fallback');
+      saveSessionToLocalStorage(userEmail);
+      return;
+    }
+    
+    // Create timeout promise (8 seconds)
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Firebase timeout - saving to localStorage')), 8000)
+    );
+    
+    // Use email as unique identifier with timeout
+    const savePromise = db.collection('users').doc(userEmail).collection('sessions').doc(currentSessionId).set(currentSessionData);
+    
+    await Promise.race([savePromise, timeoutPromise]);
+    console.log('[FIREBASE] ✓ Session saved to Firebase');
+  } catch (error) {
+    console.warn('[FIREBASE] Firebase save failed, saving to localStorage instead:', error.message);
+    // Fallback to localStorage
+    saveSessionToLocalStorage(userEmail);
+  }
+}
+
+// Fallback: Save session to localStorage
+function saveSessionToLocalStorage(userEmail) {
+  try {
+    const sessions = JSON.parse(localStorage.getItem('mathQuizSessions') || '[]');
+    currentSessionData.savedLocally = true;
+    currentSessionData.savedTimestamp = new Date().toISOString();
+    sessions.push(currentSessionData);
+    localStorage.setItem('mathQuizSessions', JSON.stringify(sessions));
+    console.log('[LOCALSTORAGE] ✓ Session saved to localStorage');
+  } catch (error) {
+    console.error('[LOCALSTORAGE] Error saving to localStorage:', error);
+  }
+}
+
+// Function to load user sessions from Firebase
+async function loadUserSessions(userEmail) {
+  if (!userEmail) {
+    console.error('[FIREBASE] User email not provided');
+    return [];
+  }
+  
+  try {
+    // Try Firebase first
+    if (db) {
+      console.log('[FIREBASE] Loading sessions for email:', userEmail);
+      
+      // Add a timeout to prevent hanging
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Firebase query timeout - using localStorage fallback')), 5000)
+      );
+      
+      const queryPromise = db.collection('users').doc(userEmail).collection('sessions').get();
+      const snapshot = await Promise.race([queryPromise, timeoutPromise]);
+      
+      console.log('[FIREBASE] ✓ Snapshot received, docs count:', snapshot.size);
+      
+      const sessions = [];
+      snapshot.forEach(doc => {
+        console.log('[FIREBASE] Session doc:', doc.data());
+        sessions.push(doc.data());
+      });
+      
+      if (sessions.length > 0) {
+        console.log('[FIREBASE] ✓ Loaded from Firebase:', sessions.length, 'sessions');
+        return sessions;
+      }
+    }
+  } catch (error) {
+    console.warn('[FIREBASE] Firebase load failed, falling back to localStorage:', error.message);
+  }
+  
+  // Fallback to localStorage
+  try {
+    console.log('[LOCALSTORAGE] Loading sessions from localStorage');
+    const sessionsJson = localStorage.getItem('mathQuizSessions');
+    if (!sessionsJson) {
+      console.log('[LOCALSTORAGE] No sessions found in localStorage');
+      return [];
+    }
+    
+    const sessions = JSON.parse(sessionsJson);
+    console.log('[LOCALSTORAGE] ✓ Loaded from localStorage:', sessions.length, 'sessions');
+    return sessions;
+  } catch (error) {
+    console.error('[LOCALSTORAGE] Error loading from localStorage:', error);
+    return [];
+  }
+}
+
+// Helper function to generate UUID
+function generateUUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize all DOM elements first
+    const nameModal = document.getElementById('name-modal');
+    const nameInput = document.getElementById('name-input');
+    const nameSubmitBtn = document.getElementById('name-submit-btn');
+    const userNameDisplay = document.getElementById('user-name-display');
+    const scoreTitleName = document.getElementById('score-title-name');
+    const changeNameBtn = document.getElementById('change-name-btn');
+    const nameDisplay = document.querySelector('.name-display');
+    const emailInput = document.getElementById('email-input');
+    const submitBtn = document.getElementById('submit-btn');
+    const sectionSelect = document.getElementById('section-select');
+    const gradeSelect = document.getElementById('grade-select');
+    const saveSessionBtn = document.getElementById('save-session-btn');
+    const viewHistoryBtn = document.getElementById('view-history-btn');
+    const historyModal = document.getElementById('history-modal');
+    const historyList = document.getElementById('history-list');
+    const closeHistoryBtn = document.getElementById('close-history-btn');
+
+    // Email validation function
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    // Initialize grade-related variables FIRST (needed before enableApp() is called)
     const questionText = document.getElementById('question-text');
     const answerFields = document.getElementById('answer-fields');
     let answerInput = document.getElementById('answer-input');
-    const submitBtn = document.getElementById('submit-btn');
     const resultDiv = document.getElementById('result');
-    const sectionSelect = document.getElementById('section-select');
-    const gradeSelect = document.getElementById('grade-select');
     const nextBtn = document.getElementById('next-btn');
     const adminSkipBtn = document.getElementById('admin-skip-btn');
     let currentQuestionId = null;
@@ -18,20 +224,144 @@ document.addEventListener('DOMContentLoaded', () => {
     let isAdminMode = false;
     let currentCorrectAnswer = null;
 
+    // Restore saved grade BEFORE authentication check (needed for enableApp -> updateAvailableSections)
     const savedGrade = localStorage.getItem('mathQuizGrade');
     if (savedGrade) {
         gradeSelect.value = savedGrade;
         currentGrade = parseInt(savedGrade);
+        console.log('[INIT] Restored saved grade:', savedGrade);
+        
+        // Restore the section
+        currentSection = 'addition';
+        sectionSelect.value = 'addition';
+    }
+
+    // Check if user has a saved name
+    const savedName = localStorage.getItem('mathQuizUserName');
+    const savedEmail = localStorage.getItem('mathQuizUserEmail');
+    
+    console.log('[AUTH] Checking for saved user - Name:', savedName, 'Email:', savedEmail);
+    
+    if (savedName && savedEmail) {
+        console.log('[AUTH] ✓ User already authenticated, restoring...');
+        userNameDisplay.textContent = savedName;
+        scoreTitleName.textContent = savedName;
+        nameModal.classList.add('hidden');
+        nameDisplay.classList.remove('hidden');
+        console.log('[AUTH] Modal hidden:', nameModal.classList.contains('hidden'));
+        console.log('[AUTH] Display visible:', !nameDisplay.classList.contains('hidden'));
+        // Enable app features if user is already authenticated
         enableApp();
+        console.log('[AUTH] ✓ App enabled');
+    } else {
+        console.log('[AUTH] No saved user, showing modal');
+        // Make sure modal is visible if no saved name
+        nameModal.classList.remove('hidden');
+        nameDisplay.classList.add('hidden');
+        nameInput.focus();
+    }
+
+    // Handle name submission
+    nameSubmitBtn.addEventListener('click', submitName);
+    
+    function submitName() {
+        const name = nameInput.value.trim();
+        const email = emailInput.value.trim();
+        
+        // Validate inputs
+        if (name.length === 0) {
+            alert('Please enter your name.');
+            nameInput.focus();
+            return;
+        }
+        
+        if (email.length === 0) {
+            alert('Please enter your email.');
+            emailInput.focus();
+            return;
+        }
+        
+        if (!isValidEmail(email)) {
+            alert('Please enter a valid email address (e.g., user@example.com)');
+            emailInput.focus();
+            return;
+        }
+        
+        // Save both name and email
+        localStorage.setItem('mathQuizUserName', name);
+        localStorage.setItem('mathQuizUserEmail', email);
+        userNameDisplay.textContent = name;
+        scoreTitleName.textContent = name;
+        nameModal.classList.add('hidden');
+        nameDisplay.classList.remove('hidden');
+        nameInput.value = '';
+        emailInput.value = '';
+        
+        // Enable app features so user can select grade
+        enableApp();
+        
+        // Focus on grade selector for user to choose
+        gradeSelect.focus();
+        
+        document.body.focus();
+    }
+
+    // Allow Enter key to submit name
+    nameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            emailInput.focus();
+        }
+    });
+    
+    emailInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            submitName();
+        }
+    });
+
+    // Change name button
+    changeNameBtn.addEventListener('click', () => {
+        nameInput.value = userNameDisplay.textContent;
+        emailInput.value = localStorage.getItem('mathQuizUserEmail') || '';
+        nameModal.classList.remove('hidden');
+        nameDisplay.classList.add('hidden');
+        nameInput.focus();
+    });
+
+    // Grade restoration code moved up to before authentication check
+
+    // Continue with session restoration if grade was saved
+    if (savedGrade) {
+        // Get saved username for session
+        const savedUserName = localStorage.getItem('mathQuizUserName') || 'User';
+        
+        // Initialize session with restored grade
+        startNewSession(savedUserName, currentGrade, 'addition');
+        
+        // Update available sections based on grade
+        updateAvailableSections();
+        
+        // Enable app features
+        enableApp();
+        
+        console.log('[INIT] Loading first question for section:', currentSection);
+        loadQuestion(currentSection);
     }
 
     gradeSelect.addEventListener('change', (e) => {
         const grade = e.target.value;
+        console.log('[GRADE] Grade selected:', grade);
         if (grade) {
             currentGrade = parseInt(grade);
             localStorage.setItem('mathQuizGrade', grade);
+            // Start new session when grade is selected
+            startNewSession(userNameDisplay.textContent, currentGrade, 'addition');
             enableApp();
             updateAvailableSections();
+            // Set default section to addition
+            currentSection = 'addition';
+            sectionSelect.value = 'addition';
+            console.log('[GRADE] Loading first question for section:', currentSection);
             loadQuestion(currentSection);
         }
     });
@@ -96,11 +426,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function enableApp() {
+        console.log('[APP] Enabling app features after user authentication');
+        
+        // Enable all disabled-overlay elements
         document.querySelectorAll('.disabled-overlay').forEach(el => {
             el.classList.add('enabled');
         });
+        
+        // Specifically enable grade selector
+        const gradeSelectorContainer = document.getElementById('grade-selector-container');
+        const gradeSelect = document.getElementById('grade-select');
+        
+        if (gradeSelectorContainer) {
+            gradeSelectorContainer.classList.remove('disabled-overlay');
+        }
+        if (gradeSelect) {
+            gradeSelect.disabled = false;
+        }
+        
+        // Enable other controls
         sectionSelect.disabled = false;
         submitBtn.disabled = false;
+        saveSessionBtn.disabled = false;
+        viewHistoryBtn.disabled = false;
+        
+        console.log('[APP] ✓ App features enabled');
         updateAvailableSections();
     }
 
@@ -162,12 +512,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function loadQuestion(section) {
+        console.log('[QUESTION] Loading question for section:', section, 'grade:', currentGrade);
+        
         if (!currentGrade) {
+            console.error('[QUESTION] No grade selected');
+            questionText.textContent = 'Please select a grade to begin.';
             return;
         }
-        fetch(`http://127.0.0.1:5000/api/question?section=${section}&grade=${currentGrade}`)
-            .then(res => res.json())
+        
+        const apiUrl = `http://127.0.0.1:5000/api/question?section=${section}&grade=${currentGrade}`;
+        console.log('[QUESTION] Fetching from:', apiUrl);
+        
+        fetch(apiUrl)
+            .then(res => {
+                console.log('[QUESTION] Response status:', res.status);
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+                }
+                return res.json();
+            })
             .then(data => {
+                console.log('[QUESTION] ✓ Received question:', data);
+                if (!data.question) {
+                    throw new Error('No question in response');
+                }
                 // Format fractions properly in question text
                 if (section === 'fractions' && data.question) {
                     // Replace "1/2" with proper fraction display
@@ -407,6 +775,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     });
                 }
+            })
+            .catch(error => {
+                console.error('[QUESTION] ✗ Error loading question:', error);
+                questionText.textContent = `Error loading question: ${error.message}`;
+                resultDiv.textContent = 'Failed to load question. Check the console for details.';
             });
     }
 
@@ -457,6 +830,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 scoreValue.textContent = score;
                 resultDiv.textContent = `Correct! 🎉 (+${points} points)`;
                 currentCorrectAnswer = data.correct_answer;
+                
+                // Add to session
+                addQuestionToSession(
+                  questionText.textContent,
+                  userAnswer,
+                  data.correct_answer,
+                  true,
+                  points
+                );
                 if (currentSection === 'division') {
                     document.getElementById('quotient-input').disabled = true;
                     document.getElementById('remainder-input').disabled = true;
@@ -486,6 +868,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 } else {
                     resultDiv.textContent = `Incorrect. The correct answer is ${JSON.stringify(data.correct_answer)}.`;
+                    
+                    // Add to session (incorrect answer after max attempts = 0 points)
+                    addQuestionToSession(
+                      questionText.textContent,
+                      userAnswer,
+                      data.correct_answer,
+                      false,
+                      0
+                    );
                     if (currentSection === 'division') {
                         document.getElementById('quotient-input').disabled = true;
                         document.getElementById('remainder-input').disabled = true;
@@ -536,5 +927,104 @@ document.addEventListener('DOMContentLoaded', () => {
                 answerInput.focus();
             }
         }, 100);
+    });
+
+    // Save Session Button
+
+    saveSessionBtn.addEventListener('click', async () => {
+        console.log('[SAVE] Save Session clicked');
+        console.log('[SAVE] Current session data:', currentSessionData);
+        console.log('[SAVE] Questions answered:', currentSessionData.questions.length);
+        
+        if (currentSessionData.questions.length === 0) {
+            alert('No questions answered yet. Answer some questions first!');
+            return;
+        }
+        
+        saveSessionBtn.disabled = true;
+        saveSessionBtn.textContent = '💾 Saving...';
+        
+        try {
+            console.log('[SAVE] Starting save to Firebase...');
+            await saveSessionToFirebase();
+            console.log('[SAVE] ✓ Save successful!');
+            saveSessionBtn.textContent = '✅ Saved!';
+            setTimeout(() => {
+                saveSessionBtn.textContent = '💾 Save Session';
+                saveSessionBtn.disabled = false;
+            }, 2000);
+        } catch (error) {
+            console.error('[SAVE] ✗ Error saving session:', error);
+            alert('Error saving session. Check console for details.');
+            saveSessionBtn.textContent = '💾 Save Session';
+            saveSessionBtn.disabled = false;
+        }
+    });
+
+    // View History Button
+    viewHistoryBtn.addEventListener('click', async () => {
+        historyModal.classList.remove('hidden');
+        historyList.innerHTML = '<p>⏳ Loading sessions... (this may take a moment)</p>';
+        
+        try {
+            // Get email from localStorage
+            const userEmail = localStorage.getItem('mathQuizUserEmail');
+            if (!userEmail) {
+                historyList.innerHTML = '<p>❌ Error: User email not found. Please refresh and try again.</p>';
+                console.error('User email not found in localStorage');
+                return;
+            }
+            
+            console.log('[DEBUG] Requesting sessions for:', userEmail);
+            console.log('[DEBUG] Firebase db instance:', db);
+            const sessions = await loadUserSessions(userEmail);
+            console.log('[DEBUG] Received sessions:', sessions);
+            
+            if (sessions.length === 0) {
+                historyList.innerHTML = '<p>No saved sessions yet. Answer some questions and save a session!</p>';
+                return;
+            }
+            
+            historyList.innerHTML = '';
+            sessions.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
+            
+            sessions.forEach(session => {
+                const sessionDate = new Date(session.startTime).toLocaleDateString();
+                const sessionTime = new Date(session.startTime).toLocaleTimeString();
+                const totalQuestions = session.questions.length;
+                const correctAnswers = session.questions.filter(q => q.correct).length;
+                const score = session.totalScore;
+                
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <div class="history-item-header">
+                        <span>Grade ${session.grade} - ${session.section}</span>
+                        <span>${sessionDate} ${sessionTime}</span>
+                    </div>
+                    <div class="history-item-details">
+                        <p>Questions: ${correctAnswers}/${totalQuestions} correct</p>
+                        <div class="history-item-score">Score: ${score} points</div>
+                    </div>
+                `;
+                historyList.appendChild(historyItem);
+            });
+        } catch (error) {
+            console.error('[ERROR] Failed to load sessions:', error);
+            const errorMsg = error.message || 'Unknown error';
+            historyList.innerHTML = `<p>❌ Error loading sessions:<br/>${errorMsg}<br/><small>Check browser console for details</small></p>`;
+        }
+    });
+
+    // Close History Modal
+    closeHistoryBtn.addEventListener('click', () => {
+        historyModal.classList.add('hidden');
+    });
+
+    // Close modal when clicking outside
+    historyModal.addEventListener('click', (e) => {
+        if (e.target === historyModal) {
+            historyModal.classList.add('hidden');
+        }
     });
 });
