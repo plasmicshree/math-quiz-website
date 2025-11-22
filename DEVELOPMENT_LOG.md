@@ -521,5 +521,234 @@ if (firebaseConfig && typeof firebase !== 'undefined') {
 - ✅ Ready for PR and merge to main
 
 ---
-**Session End**: All localStorage persistence issues resolved, security fixed, feature branch ready for PR ✅
+
+## Session: November 22, 2025 (Continued)
+
+### Grade 1 Addition Block Visualization Feature
+
+#### Initial Request
+User wanted Grade 1 addition questions to display SVG block visualizations (5-section rectangles) showing the problem and solution, similar to teaching manipulatives for children.
+
+**Requirements**:
+1. Display problems as blocks: first number + second number = result
+2. Constraints on numbers: sum ≤ 20 (not exceed 10)
+3. Difficulty distribution: 70% easy (sum < 10), 30% harder (sum 10-20)
+4. Visual should be isolated from existing fractions code
+5. Solution blocks only show on correct answer or after max attempts
+
+#### Step 1: Backend Update - Weighted Distribution
+
+**File**: `backend/grades/grade_1.py`
+
+**Changes**:
+- Lines 12-20: Implemented weighted distribution
+  - 70% chance: sum < 10 (both numbers 1-9, ensuring sum < 10)
+  - 30% chance: sum 10-20 (first 1-9, second adjusted to make sum 10-20)
+- Lines 22-36: Added `create_blocks()` helper function
+  - Calculates full blocks (each = 5 sections) and remainder
+  - Returns: {full_blocks, remainder, total}
+- Updated return to include: question, answer, first_number, second_number, visual
+
+**Visual Data Structure**:
+```python
+{
+    'first': {'full_blocks': 2, 'remainder': 1, 'total': 11},
+    'second': {'full_blocks': 1, 'remainder': 3, 'total': 8},
+    'result': {'full_blocks': 3, 'remainder': 4, 'total': 19}
+}
+```
+
+#### Step 2: Backend API - Include Visual Data
+
+**File**: `backend/app.py`
+
+**Changes**: Lines 257-292
+- Updated `/api/question` endpoint to check for Grade 1 addition
+- Condition: `if section == "addition" and grade == 1:`
+- Response now includes:
+  - `visual`: The block structure for first, second, result
+  - `first_number`: First addend (integer)
+  - `second_number`: Second addend (integer)
+  - `answer`: Correct sum (always included)
+
+#### Step 3: CSS Fixes - Display Issues
+
+**File**: `frontend/style.css`
+
+**Issues Found**:
+1. `#chart-container` had `max-width: 400px` and `overflow: hidden`
+   - SVG blocks were being clipped
+2. `#section-select` was crumbling the layout
+   - Multi-line options expanding beyond sidebar
+
+**Fixes Applied**:
+- Lines 50-62: Updated `#chart-container`
+  - Changed `max-width: 400px` → `max-width: 100%`
+  - Changed `overflow: hidden` → `overflow: visible`
+- Lines 359-384: Updated `#section-select`
+  - Added `box-sizing: border-box`
+  - Added `max-width: 150px`
+  - Added `overflow: hidden` to constrain options
+
+#### Step 4: Frontend - Isolated Rendering Functions
+
+**File**: `frontend/app.js`
+
+**Decision**: Create completely isolated functions for Grade 1 Addition to avoid interfering with existing Grade 5 fractions code.
+
+**Functions Created** (Lines 510-649):
+
+1. **`renderGrade1Addition(data, chartContainer)`** (Lines 510-572)
+   - Entry point with full data validation
+   - Builds HTML with:
+     - Problem display: "12 + 8 = ?"
+     - Visual blocks for first and second numbers
+     - Plus sign and equals sign
+     - Hidden solution div
+   - Returns: true (success) or false (failure)
+   - Calls: renderBlocksForNumber(), renderSolutionBlocks()
+
+2. **`renderBlocksForNumber(numberVisual, color, label)`** (Lines 575-608)
+   - Renders SVG blocks for problem display
+   - Parameters:
+     - `numberVisual`: {full_blocks, remainder, total}
+     - `color`: #4CAF50 (green) or #2196F3 (blue)
+     - `label`: "12" or "8" to show the number
+   - Block structure:
+     - Each block: 5 sections (5 tall boxes × 20px = 100px height)
+     - Full blocks: solid filled rectangles
+     - Remainder: partially filled rectangle
+   - Returns: SVG string for rendering
+
+3. **`renderSolutionBlocks(visual, firstNum, secondNum, firstColor, secondColor)`** (Lines 611-649)
+   - Renders combined result blocks showing color distribution
+   - Structure shows:
+     - Green sections (count = firstNum)
+     - Blue sections (count = secondNum)
+     - Grey sections (empty remainder)
+   - Total sections = result total
+   - Returns: SVG string for rendering
+
+#### Step 5: Integration Points
+
+**Lines 689-700**: Render Logic
+```javascript
+else if (grade === 1 && section === "addition") {
+    const success = renderGrade1Addition(data, chartContainer);
+    if (!success) {
+        console.error("[RENDER] Failed to render Grade 1 Addition");
+        return;
+    }
+}
+```
+
+**Lines 981-989**: Correct Answer Handler
+- When user answers correctly: `document.getElementById('addition-solution-hidden').style.display = 'block'`
+
+**Lines 1027-1035**: Max Attempts Handler
+- After 3 failed attempts: `document.getElementById('addition-solution-hidden').style.display = 'block'`
+
+#### Step 6: Backend Server Setup
+
+**Issue**: Frontend couldn't reach backend API
+- Error: `net::ERR_CONNECTION_REFUSED`
+
+**Solution**: Started Flask backend server on port 5000
+```bash
+cd backend
+python app.py  # or: python -m flask run --host 127.0.0.1 --port 5000
+```
+
+**Verification**:
+- Backend running and responding to `/api/question` requests
+- Visual data returning correctly in API response
+- CORS handling working properly
+
+#### Testing Results
+
+✅ **All Features Working**:
+- Grade 1 addition questions generate with correct weighted distribution
+- Visual data returns from backend API
+- Problem display shows colored blocks:
+  - Green (#4CAF50) for first number
+  - Blue (#2196F3) for second number
+- Plus sign (+) and equals sign (=) display properly
+- Solution blocks reveal on correct answer
+- Solution blocks reveal after 3 attempts
+- Solution shows combined colors (green + blue sections)
+- No interference with other grades
+- Session history still working
+- localStorage persistence maintained
+
+**Cache-Busting Strategy**: 
+- When testing frontend changes, use `?t=<timestamp>` in URL
+- Example: `http://localhost:8000/index.html?t=11`
+- Ensures latest code loads even with browser cache
+
+#### Commits Made
+
+1. **`8f3c7a2`** - Update development log: Add security fix documentation
+   - Documented removal of Firebase credentials
+   - Explained security risk and actions taken
+   - Listed all commits made in session
+   - Updated final state section
+
+2. **`4c5d2a3`** - Add Grade 1 Addition SVG block visualization with isolated rendering functions
+   - Created 3 independent functions for Grade 1 Addition visualization
+   - Updated backend API to return visual data for Grade 1
+   - Updated backend/grades/grade_1.py with weighted distribution
+   - Fixed CSS issues: chart-container overflow and section-select layout
+   - Solution blocks reveal on correct answer or max attempts
+   - Completely isolated from fractions visualization for Grade 5
+
+### Code Redundancy Check
+
+**Files Analyzed**:
+- `frontend/app.js` - Main application logic
+- `backend/app.py` - Flask API server
+- `backend/grades/grade_1.py` - Grade 1 question generation
+
+**Redundancy Findings**:
+
+1. **No redundant Grade 1 functions**
+   - All 3 rendering functions serve distinct purposes
+   - `renderGrade1Addition()` - orchestrator
+   - `renderBlocksForNumber()` - problem display
+   - `renderSolutionBlocks()` - solution display
+   - Functions are modular and single-purpose
+
+2. **Backend duplication check**
+   - `/api/question` endpoint: handles all grades/sections
+   - Grade 1 addition block: properly isolated with `if section == "addition" and grade == 1:` condition
+   - No duplicate response building logic
+
+3. **localStorage usage consistent**
+   - All localStorage reads/writes use consistent keys
+   - Fallback chain properly structured
+   - No conflicting storage patterns
+
+4. **CSS optimization opportunity** (Minor)
+   - Multiple similar block styling patterns
+   - Could consolidate block-related CSS classes
+   - Current approach: inline SVG styling (acceptable)
+
+**Conclusion**: ✅ No significant redundancy detected. Code is well-organized and modular.
+
+### Current State
+- ✅ Grade 1 Addition block visualization complete
+- ✅ Backend and frontend integration working
+- ✅ All features tested and verified
+- ✅ Code is clean with no significant redundancy
+- ✅ 2 commits made for today's work
+- ✅ Feature branch `feature/user-name-input` ready for PR
+
+### Remaining Work (Optional Future Features)
+1. Grade 1 Subtraction with similar visualization
+2. Grade 2 addition/subtraction with blocks
+3. Grade 3+ with more complex visualizations
+4. Multiplication with arrays (Grade 2+)
+5. Division with grouping visualization (Grade 3+)
+
+---
+**Session End**: Grade 1 Addition visualization feature complete, code clean, ready for production ✅
 

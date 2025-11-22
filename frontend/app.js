@@ -507,6 +507,145 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    /**
+     * Renders Grade 1 Addition visualization with blocks
+     * Completely isolated from fractions visualization
+     */
+    function renderGrade1Addition(data, chartContainer) {
+        try {
+            console.log('[GRADE1-ADD] Rendering with data:', data);
+            
+            if (!data.visual || !data.first_number || !data.second_number || !data.answer) {
+                console.error('[GRADE1-ADD] Missing required fields:', {
+                    hasVisual: !!data.visual,
+                    hasFirstNumber: !!data.first_number,
+                    hasSecondNumber: !!data.second_number,
+                    hasAnswer: !!data.answer
+                });
+                return false;
+            }
+            
+            const visual = data.visual;
+            let html = '';
+            
+            // PROBLEM DISPLAY: First Number + Second Number
+            html += '<div style="display:flex; gap:20px; justify-content:center; flex-wrap:wrap; padding:20px; background:#f9f9f9; border-radius:8px; margin-bottom:20px;">';
+            
+            // First number blocks (GREEN)
+            html += '<div style="text-align:center;">';
+            html += renderBlocksForNumber(visual.first, '#4CAF50', 'First');
+            html += `<div style="font-weight:bold; margin-top:8px; font-size:1.2rem;">${data.first_number}</div>`;
+            html += '</div>';
+            
+            // Plus sign
+            html += '<div style="font-size:36px; font-weight:bold; display:flex; align-items:center;">+</div>';
+            
+            // Second number blocks (BLUE)
+            html += '<div style="text-align:center;">';
+            html += renderBlocksForNumber(visual.second, '#2196F3', 'Second');
+            html += `<div style="font-weight:bold; margin-top:8px; font-size:1.2rem;">${data.second_number}</div>`;
+            html += '</div>';
+            
+            html += '</div>';
+            
+            // SOLUTION DISPLAY (Hidden initially)
+            html += '<div id="addition-solution-hidden" style="display:none; padding:20px; background:#f0f8ff; border-radius:8px; border-left:4px solid #2196F3;">';
+            html += '<div style="font-weight:bold; margin-bottom:12px; font-size:1.05rem;">✓ Solution:</div>';
+            html += '<div style="text-align:center;">';
+            html += renderSolutionBlocks(visual, data.first_number, data.second_number, '#4CAF50', '#2196F3');
+            html += `<div style="font-weight:bold; margin-top:12px; font-size:1.1rem;">${data.first_number} + ${data.second_number} = ${data.answer}</div>`;
+            html += '</div>';
+            html += '</div>';
+            
+            chartContainer.innerHTML = html;
+            chartContainer.style.display = 'block';
+            console.log('[GRADE1-ADD] ✓ Visualization rendered successfully');
+            return true;
+        } catch (error) {
+            console.error('[GRADE1-ADD] Error rendering visualization:', error);
+            chartContainer.innerHTML = `<div style="color:red; padding:20px;"><strong>Error:</strong> ${error.message}</div>`;
+            return false;
+        }
+    }
+    
+    /**
+     * Helper: Render blocks for a single number
+     */
+    function renderBlocksForNumber(numberVisual, color, label) {
+        const blockWidth = 30;
+        const blockHeight = 100;
+        const gap = 10;
+        const numBlocks = numberVisual.full_blocks + (numberVisual.remainder > 0 ? 1 : 0);
+        const svgWidth = Math.max(50, numBlocks * (blockWidth + gap) + 10);
+        
+        let svg = `<svg width="${svgWidth}" height="120" viewBox="0 0 ${svgWidth} 120" style="margin: 10px auto; display: block;">`;
+        
+        // Full blocks
+        for (let b = 0; b < numberVisual.full_blocks; b++) {
+            const x = b * (blockWidth + gap) + 5;
+            svg += `<g><rect x="${x}" y="0" width="${blockWidth}" height="${blockHeight}" fill="none" stroke="#333" stroke-width="2"/>`;
+            for (let s = 0; s < 5; s++) {
+                const sy = s * 20;
+                svg += `<rect x="${x}" y="${sy}" width="${blockWidth}" height="20" fill="${color}" stroke="#333" stroke-width="1"/>`;
+            }
+            svg += `</g>`;
+        }
+        
+        // Partial block if needed
+        if (numberVisual.remainder > 0) {
+            const x = numberVisual.full_blocks * (blockWidth + gap) + 5;
+            svg += `<g><rect x="${x}" y="0" width="${blockWidth}" height="${blockHeight}" fill="none" stroke="#333" stroke-width="2"/>`;
+            for (let s = 0; s < 5; s++) {
+                const sy = s * 20;
+                const fillColor = s < numberVisual.remainder ? color : '#e8e8e8';
+                svg += `<rect x="${x}" y="${sy}" width="${blockWidth}" height="20" fill="${fillColor}" stroke="#333" stroke-width="1"/>`;
+            }
+            svg += `</g>`;
+        }
+        
+        svg += '</svg>';
+        return svg;
+    }
+    
+    /**
+     * Helper: Render solution blocks showing combined result
+     */
+    function renderSolutionBlocks(visual, firstNum, secondNum, firstColor, secondColor) {
+        const blockWidth = 30;
+        const blockHeight = 100;
+        const gap = 10;
+        const totalNum = visual.result.total;
+        const numBlocks = Math.ceil(totalNum / 5);
+        const svgWidth = Math.max(80, numBlocks * (blockWidth + gap) + 10);
+        
+        let svg = `<svg width="${svgWidth}" height="120" viewBox="0 0 ${svgWidth} 120" style="margin: 10px auto; display: block;">`;
+        
+        let sectionIndex = 0;
+        
+        for (let b = 0; b < numBlocks; b++) {
+            const x = b * (blockWidth + gap) + 5;
+            svg += `<g><rect x="${x}" y="0" width="${blockWidth}" height="${blockHeight}" fill="none" stroke="#333" stroke-width="2"/>`;
+            
+            for (let s = 0; s < 5; s++) {
+                const sy = s * 20;
+                let fillColor = '#e8e8e8';
+                
+                if (sectionIndex < firstNum) {
+                    fillColor = firstColor; // Green for first number
+                } else if (sectionIndex < totalNum) {
+                    fillColor = secondColor; // Blue for second number
+                }
+                
+                svg += `<rect x="${x}" y="${sy}" width="${blockWidth}" height="20" fill="${fillColor}" stroke="#333" stroke-width="1"/>`;
+                sectionIndex++;
+            }
+            svg += `</g>`;
+        }
+        
+        svg += '</svg>';
+        return svg;
+    }
+
     function loadQuestion(section) {
         console.log('[QUESTION] Loading question for section:', section, 'grade:', currentGrade);
         
@@ -547,7 +686,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 const chartContainer = document.getElementById('chart-container');
                 chartContainer.innerHTML = '';
                 chartContainer.style.display = 'none';
-                if (section === 'division') {
+                
+                // Grade 1 Addition with block visualization
+                // Grade 1 Addition - Use dedicated function
+                if (currentGrade === 1 && section === 'addition') {
+                    console.log('[GRADE1] Rendering Grade 1 Addition visualization');
+                    const success = renderGrade1Addition(data, chartContainer);
+                    if (!success) {
+                        console.error('[GRADE1] Failed to render visualization');
+                        return;
+                    }
+                    answerFields.innerHTML = `<input type="number" id="answer-input" placeholder="Your answer"><span id="admin-answer-display" style="margin-left:12px;color:#666;font-size:0.9rem;"></span>`;
+                } else if (section === 'division') {
                     answerFields.innerHTML = `
                         <input type="number" id="quotient-input" placeholder="Quotient">
                         <input type="number" id="remainder-input" placeholder="Remainder" style="margin-left:8px;">
@@ -827,6 +977,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 resultDiv.textContent = `Correct! 🎉 (+${points} points)`;
                 currentCorrectAnswer = data.correct_answer;
                 
+                // Show Grade 1 addition solution visualization
+                if (currentGrade === 1 && currentSection === 'addition') {
+                    const solutionDiv = document.getElementById('addition-solution-hidden');
+                    if (solutionDiv) {
+                        solutionDiv.style.display = 'block';
+                    }
+                }
+                
                 // Add to session
                 addQuestionToSession(
                   questionText.textContent,
@@ -864,6 +1022,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 } else {
                     resultDiv.textContent = `Incorrect. The correct answer is ${JSON.stringify(data.correct_answer)}.`;
+                    
+                    // Show Grade 1 addition solution visualization
+                    if (currentGrade === 1 && currentSection === 'addition') {
+                        const solutionDiv = document.getElementById('addition-solution-hidden');
+                        if (solutionDiv) {
+                            solutionDiv.style.display = 'block';
+                        }
+                    }
                     
                     // Add to session (incorrect answer after max attempts = 0 points)
                     addQuestionToSession(
@@ -990,6 +1156,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const totalQuestions = session.questions.length;
                 const correctAnswers = session.questions.filter(q => q.correct).length;
                 const score = session.totalScore;
+                const maxPossibleScore = totalQuestions * 10; // 10 points per question maximum
                 
                 const historyItem = document.createElement('div');
                 historyItem.className = 'history-item';
@@ -1000,7 +1167,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="history-item-details">
                         <p>Questions: ${correctAnswers}/${totalQuestions} correct</p>
-                        <div class="history-item-score">Score: ${score} points</div>
+                        <div class="history-item-score">Score: ${score}/${maxPossibleScore} points</div>
                     </div>
                 `;
                 historyList.appendChild(historyItem);

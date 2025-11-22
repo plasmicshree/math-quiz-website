@@ -268,14 +268,19 @@ def get_question():
         app.config['answers'][q['id']] = q['answer']
         # For charts, include chart and sub_questions in response
         # For fractions, include fraction_visual and answer in response
-        resp = {"question": q["question"], "id": q["id"], "section": section}
+        # For Grade 1 addition, include visual data
+        resp = {"question": q["question"], "id": q["id"], "section": section, "answer": q.get("answer")}
         if section == "charts":
             resp["chart"] = q.get("chart")
             resp["sub_questions"] = q.get("sub_questions")
         elif section == "fractions":
             resp["fraction_visual"] = q.get("fraction_visual")
-            resp["answer"] = q.get("answer")
             resp["fraction"] = q.get("fraction")
+        elif section == "addition" and grade == 1:
+            # Include visual blocks data for Grade 1 addition
+            resp["visual"] = q.get("visual")
+            resp["first_number"] = q.get("first_number")
+            resp["second_number"] = q.get("second_number")
         return jsonify(resp)
     return jsonify({"error": "Invalid section"}), 400
 
