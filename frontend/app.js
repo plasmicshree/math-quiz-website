@@ -1,16 +1,12 @@
 // Initialize Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyCfAwDRE9JJFhW_j6_hg3wIp0oIX6c5-M0",
-  authDomain: "math-app-d6f00.firebaseapp.com",
-  projectId: "math-app-d6f00",
-  storageBucket: "math-app-d6f00.appspot.com",
-  messagingSenderId: "333699287838",
-  appId: "1:333699287838:web:343907f2b4ebe2ce6a170f"
-};
+// Note: Firebase config should be loaded from environment or config file
+// For now, Firebase is disabled due to offline connectivity issues
+// TODO: Set up Firebase config as environment variable when needed
+const firebaseConfig = null; // Credentials removed for security
 
 let db = null;
 
-if (typeof firebase !== 'undefined') {
+if (firebaseConfig && typeof firebase !== 'undefined') {
   try {
     firebase.initializeApp(firebaseConfig);
     console.log('✓ Firebase initialized successfully');
@@ -20,7 +16,7 @@ if (typeof firebase !== 'undefined') {
     console.error('✗ Firebase initialization error:', error);
   }
 } else {
-  console.error('✗ Firebase SDK not loaded - check script includes');
+  console.log('ℹ Firebase not configured - using localStorage for session persistence');
 }
 
 // Session tracking
