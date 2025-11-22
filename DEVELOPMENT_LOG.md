@@ -204,4 +204,322 @@ Quick access to modified sections:
 - Grade 6 generation: `grade_6.py` line 47-70
 
 ---
-**Session End**: All requested features implemented and tested ✅
+
+## Session: November 22, 2025
+
+### Initial State
+- Quiz app running with name/email authentication modal
+- Firebase Firestore integrated but offline/connectivity issues
+- localStorage fallback implemented but not fully working
+- Page refresh was losing all state (name, grade, section, history)
+
+### Problems Encountered
+
+#### 1. View History Button Greyed Out After Refresh
+**Issue**: After page refresh, "View History" button was disabled (greyed out)
+
+**Root Cause**: 
+- Button variables declared late in code (line 881)
+- `enableApp()` function called early (line 210 during auth check)
+- `enableApp()` tried to access `viewHistoryBtn` before it was declared
+- JavaScript scoping issue
+
+**Solution**:
+- Moved all DOM element declarations to top of `DOMContentLoaded` block (lines 171-187)
+- Consolidated variable declarations at start
+- Removed duplicate declarations later in code
+
+#### 2. currentGrade "Cannot Access Before Initialization" Error
+**Issue**: Browser console error: `Uncaught ReferenceError: Cannot access 'currentGrade' before initialization`
+
+**Root Cause**:
+- Grade variables initialized at line 287
+- But `enableApp()` called at line 210 during auth check
+- `enableApp()` calls `updateAvailableSections()` which needs `currentGrade`
+- Grade restoration code ran AFTER authentication check
+
+**Solution**:
+- Moved `currentGrade` and quiz variable initialization to line 196
+- Moved grade restoration code (from localStorage) to line 203
+- Now `currentGrade` exists and has correct value before `enableApp()` is called
+- Proper execution order:
+  1. Initialize all variables
+  2. Restore saved grade from localStorage
+  3. Check for authenticated user
+  4. Call `enableApp()` if authenticated
+  5. Load question if grade was restored
+
+#### 3. Sessions Not Appearing in History After Refresh
+**Issue**: Save Session worked, View History showed session once, but after refresh it disappeared
+
+**Root Cause**:
+- `loadUserSessions()` only tried Firebase
+- No localStorage fallback
+- Firebase times out due to offline/connectivity issues
+- Function threw error, View History showed "Error loading sessions"
+
+**Solution**:
+- Updated `loadUserSessions()` function (lines 122-165) with fallback chain:
+  1. Try Firebase first (5-second timeout)
+  2. If Firebase fails, fall back to localStorage
+  3. Parse `mathQuizSessions` from localStorage
+  4. Return sessions array (empty if nothing found)
+
+**Fallback Logic**:
+```javascript
+try {
+  // Try Firebase
+  return sessions; // If success
+} catch (error) {
+  // Fall back to localStorage
+  return JSON.parse(localStorage.getItem('mathQuizSessions'));
+}
+```
+
+### Code Changes Summary
+
+#### Frontend Files Modified
+1. `frontend/app.js`
+   - Lines 171-187: Moved DOM element declarations to top
+   - Lines 196-210: Moved quiz variable initialization early
+   - Lines 203-208: Moved grade restoration before auth check
+   - Lines 122-165: Added localStorage fallback to `loadUserSessions()`
+   - Removed duplicate variable declarations
+
+2. `frontend/check-storage.html` (created)
+   - Diagnostic page to view/clear localStorage contents
+   - Shows all stored keys and values
+   - Real-time updates
+
+3. `frontend/diagnostic.html` (created)
+   - Multi-step test for app initialization
+   - Simulates saving user info and grade selection
+   - Tests page refresh flow
+
+### Testing Results
+✅ Complete flow working:
+1. Enter name/email → Stored in localStorage
+2. Select grade → Stored in localStorage
+3. Answer questions → Questions loaded from backend
+4. Save session → Stored in localStorage (Firebase times out)
+5. View History → Sessions load from localStorage
+6. **Refresh page** → Name, grade, section, questions all restored
+7. **View History again** → Sessions still visible
+
+### Lessons Learned
+
+#### 1. Variable Initialization Order Matters
+- All variables used in functions must be declared before the function is called
+- Use hoisting carefully - can lead to subtle bugs
+- Declare all global/block-scoped variables at the start of scope
+
+#### 2. Firebase Connectivity Issues
+- Firebase SDK loads but connections timeout in certain environments
+- localStorage is reliable fallback for client-side persistence
+- Timeout handling critical to prevent UI hanging
+
+#### 3. Fallback Pattern Works Well
+```javascript
+// Try primary (Firebase)
+// Fall back to secondary (localStorage)
+// This pattern handles both online and offline scenarios
+```
+
+#### 4. Page Refresh State Recovery
+- Store critical state in localStorage on every change
+- Restore state early in DOMContentLoaded
+- Test refresh behavior regularly
+
+#### 5. Debugging Browser Errors
+- Browser console shows exact line numbers
+- "Cannot access X before initialization" indicates scope/timing issue
+- Check variable declaration order first
+
+### Current State
+- ✅ All features working with localStorage persistence
+- ✅ Page refresh preserves state completely
+- ✅ View History shows saved sessions across refreshes
+- ✅ No JavaScript errors in console
+- ✅ Firebase fallback working
+- ✅ Branch pushed to GitHub: `feature/user-name-input`
+
+### Architecture Notes
+
+#### localStorage Keys Used
+```javascript
+mathQuizUserName      // User's name (string)
+mathQuizUserEmail     // User's email (string)
+mathQuizGrade         // Selected grade (string: "1"-"6")
+mathQuizSessions      // Array of sessions (JSON string)
+```
+
+#### Session Object Structure
+```javascript
+{
+  sessionId: UUID,
+  userName: string,
+  grade: number,
+  section: string (addition|subtraction|multiplication|etc),
+  questions: [
+    {
+      question: string,
+      userAnswer: any,
+      correctAnswer: any,
+      correct: boolean,
+      pointsEarned: number,
+      timestamp: ISO8601
+    }
+  ],
+  totalScore: number,
+  startTime: ISO8601,
+  endTime: ISO8601,
+  savedLocally: boolean,
+  savedTimestamp: ISO8601
+}
+```
+
+#### Initialization Flow on Page Load
+```
+DOMContentLoaded
+├─ Declare DOM elements (171-187)
+├─ Initialize quiz variables (196-210)
+├─ Restore saved grade (203-208)
+├─ Check for saved user (211-229)
+│  └─ If authenticated: enableApp() → updateAvailableSections() → loadQuestion()
+├─ Attach event listeners (230+)
+└─ Ready for user interaction
+```
+
+### Next Steps / Future Work
+
+#### Optional Firebase Fixes
+1. Investigate Firebase security rules
+2. Check CORS configuration
+3. Test Firebase from different networks
+4. Consider Firebase emulator for local development
+
+#### Potential Improvements
+1. Add sync to Firebase when connectivity returns
+2. Add data export feature
+3. Add session date filtering
+4. Add bulk clear old sessions feature
+5. Add session comparison (compare two sessions)
+
+#### Testing Opportunities
+1. Test with very old/corrupted localStorage data
+2. Test with localStorage quota exceeded
+3. Test rapid grade/section changes
+4. Test with multiple browser tabs
+5. Test browser cache clearing
+
+### How to Resume Next Session
+
+1. **State Check**:
+   - Visit http://localhost:8000/check-storage.html
+   - Verify localStorage has user data
+
+2. **Start Servers**:
+   ```powershell
+   # Terminal 1: Backend
+   cd backend
+   python app.py
+   
+   # Terminal 2: Frontend
+   cd frontend
+   python -m http.server 8000
+   ```
+
+3. **Test Flow**:
+   - Visit http://localhost:8000
+   - Should show stored name/email
+   - Grade should be pre-selected
+   - Questions should load automatically
+
+4. **Check Logs**:
+   - Open browser DevTools (F12)
+   - Look for [AUTH], [INIT], [FIREBASE], [LOCALSTORAGE] prefixed logs
+   - These show exactly what's happening during initialization
+
+### Important Code Sections (Quick Reference)
+
+#### Authentication Restoration
+- Lines 211-229: Check localStorage for saved user
+- Sets nameDisplay, scoreTitleName, hides modal, calls enableApp()
+
+#### Grade Restoration
+- Lines 203-208: Restore saved grade and section
+- Lines 326-340: If grade was saved, start new session and load question
+
+#### Session Loading with Fallback
+- Lines 122-165: loadUserSessions() with Firebase→localStorage fallback
+- Lines 968-1005: View History button click handler
+
+#### Variable Initialization Order
+- Line 171: Start DOMContentLoaded
+- Line 177-187: DOM element declarations
+- Line 196-210: Quiz variables
+- Line 203-208: Grade restoration
+- Line 211-229: User authentication check
+
+### Key Insights
+
+1. **Scope matters**: Variables must be declared before use
+2. **Order matters**: Initialization sequence affects functionality  
+3. **Fallbacks save the day**: Firebase offline + localStorage = robust app
+4. **localStorage is underrated**: Surprisingly reliable for client-side state
+5. **Test refresh often**: Many bugs only show up after page refresh
+
+### Session Achievements
+✅ Fixed all persistence issues
+✅ Page refresh now works seamlessly
+✅ localStorage fallback fully integrated
+✅ No JavaScript errors
+✅ User experience improved significantly
+✅ Code pushed to GitHub
+✅ **Security: Removed Firebase credentials from code**
+✅ Ready for code review/merge
+
+### Security Actions Taken
+
+#### Removed Firebase Credentials
+**Issue**: Firebase config with API keys was hardcoded in `frontend/app.js`
+**Risk**: Public GitHub repo exposes credentials
+**Action Taken**:
+- Deleted Firebase app from Firebase Console
+- Removed all hardcoded credentials from code
+- Set `firebaseConfig = null`
+- Updated initialization to check for config before using
+- Added comments explaining removal
+
+**Files Modified**:
+- `frontend/app.js` lines 1-20: Removed firebaseConfig object, added comments
+- `.gitignore`: Added `.env` and `firebase-config.js` to prevent future commits
+
+**Updated Initialization Logic**:
+```javascript
+const firebaseConfig = null; // Credentials removed for security
+
+if (firebaseConfig && typeof firebase !== 'undefined') {
+  // Initialize only if config is provided
+} else {
+  console.log('Firebase not configured - using localStorage for persistence');
+}
+```
+
+#### Commits Made
+1. `238e2e7` - Fix localStorage persistence and page refresh issues
+2. `2581244` - Remove Firebase credentials from code for security
+3. `5977bc9` - Add environment and config files to gitignore
+
+### Current State
+- ✅ All features working with localStorage persistence
+- ✅ Page refresh preserves state completely
+- ✅ View History shows saved sessions across refreshes
+- ✅ No JavaScript errors in console
+- ✅ **No security vulnerabilities - credentials removed**
+- ✅ Branch pushed to GitHub: `feature/user-name-input`
+- ✅ Ready for PR and merge to main
+
+---
+**Session End**: All localStorage persistence issues resolved, security fixed, feature branch ready for PR ✅
+
