@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Quiz</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="main-layout three-col-layout">
+        <div class="sidebar left-sidebar">
+            <div class="grade-selector">
+                <label for="grade-select"><strong>Select Your Grade</strong></label>
+                <select id="grade-select">
+                    <option value="" disabled selected>Choose Grade...</option>
+                    <option value="1">Grade 1</option>
+                    <option value="2">Grade 2</option>
+                    <option value="3">Grade 3</option>
+                    <option value="4">Grade 4</option>
+                    <option value="5">Grade 5</option>
+                    <option value="6">Grade 6</option>
+                </select>
+            </div>
+            <div class="score-tile disabled-overlay">
+                <div class="score-title">Sashwat's Score</div>
+                <div id="score-value">0</div>
+            </div>
+            <label for="section-select" class="disabled-overlay"><strong>Math Section</strong></label>
+            <select id="section-select" size="6" disabled class="disabled-overlay">
+                <option value="addition" selected>Addition</option>
+                <option value="subtraction">Subtraction</option>
+                <option value="multiplication">Multiplication</option>
+                <option value="division">Division</option>
+                <option value="fractions">Fractions</option>
+                <option value="charts">Graphs</option>
+            </select>
+        </div>
+        <div class="center-section disabled-overlay">
+            <div class="container quiz-main">
+                <h1>Math Quiz</h1>
+                <div id="question-box">
+                    <p id="question-text">Please select your grade level to begin...</p>
+                    <div id="answer-fields">
+                        <input type="number" id="answer-input" placeholder="Your answer">
+                    </div>
+                    <button id="submit-btn" disabled>Submit</button>
+                    <button id="next-btn" class="next-btn" disabled>Next</button>
+                    <button id="admin-skip-btn" class="admin-skip-btn" disabled>⏭️ Admin Skip</button>
+                </div>
+                <div id="result"></div>
+            </div>
+        </div>
+        <div class="right-section disabled-overlay">
+            <div id="chart-container"></div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

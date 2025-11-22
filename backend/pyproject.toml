@@ -1,0 +1,16 @@
+
+
+[tool.poetry]
+name = "math_quiz_backend"
+version = "0.1.0"
+description = "Backend for Sixth Grade Math Quiz Website"
+authors = ["Your Name <your.email@example.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.8,<4.0"
+flask = "*"
+flask-cors = "*"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

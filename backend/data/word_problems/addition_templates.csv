@@ -1,0 +1,51 @@
+ID,Template,Category,Emoji
+A001,"🍎 Sarah has {a} apples. Her friend gives her {b} more apples. How many apples does Sarah have now?",Food,🍎
+A002,"🐕 There are {a} dogs at the park. {b} more dogs arrive. How many dogs are at the park now?",Animals,🐕
+A003,"⚽ Tom scored {a} goals in the first half. He scored {b} goals in the second half. How many goals did Tom score in total?",Sports,⚽
+A004,"📚 Emma has {a} books on her shelf. She buys {b} more books. How many books does Emma have now?",School,📚
+A005,"🌸 There are {a} flowers in the garden. Mom plants {b} more flowers. How many flowers are in the garden now?",Nature,🌸
+A006,"🚗 {a} cars are parked on Main Street. {b} more cars park there. How many cars are on Main Street now?",Transportation,🚗
+A007,"🎮 Jake has {a} video games. His brother gives him {b} more games. How many video games does Jake have now?",Games,🎮
+A008,"🍪 Maria baked {a} cookies in the morning. She baked {b} cookies in the afternoon. How many cookies did Maria bake in total?",Food,🍪
+A009,"🐦 {a} birds are sitting on a tree. {b} more birds fly to the tree. How many birds are on the tree now?",Animals,🐦
+A010,"🏀 The basketball team scored {a} points in the first quarter. They scored {b} points in the second quarter. How many points did they score in total?",Sports,🏀
+A011,"✏️ Kevin has {a} pencils. His teacher gives him {b} more pencils. How many pencils does Kevin have now?",School,✏️
+A012,"🌳 There are {a} trees in the park. Workers plant {b} more trees. How many trees are in the park now?",Nature,🌳
+A013,"🚌 {a} students are on the school bus. {b} more students get on at the next stop. How many students are on the bus now?",Transportation,🚌
+A014,"🎲 Amy rolled {a} on her first dice. She rolled {b} on her second dice. What is the sum of both dice?",Games,🎲
+A015,"🍕 The pizza shop made {a} pizzas for lunch. They made {b} pizzas for dinner. How many pizzas did they make in total?",Food,🍕
+A016,"🐱 There are {a} cats in the pet store. {b} more cats arrive. How many cats are in the pet store now?",Animals,🐱
+A017,"⚾ During practice, Mike hit {a} baseballs. During the game, he hit {b} baseballs. How many baseballs did Mike hit in total?",Sports,⚾
+A018,"🖍️ Lisa has {a} crayons in her box. She finds {b} more crayons. How many crayons does Lisa have now?",School,🖍️
+A019,"🦋 {a} butterflies are in the meadow. {b} more butterflies land there. How many butterflies are in the meadow now?",Nature,🦋
+A020,"✈️ {a} airplanes are at the airport. {b} more airplanes land. How many airplanes are at the airport now?",Transportation,✈️
+A021,"🃏 Sam has {a} playing cards. His friend gives him {b} more cards. How many playing cards does Sam have now?",Games,🃏
+A022,"🍩 The bakery sold {a} donuts in the morning. They sold {b} donuts in the afternoon. How many donuts did the bakery sell in total?",Food,🍩
+A023,"🐰 There are {a} rabbits in the field. {b} more rabbits hop into the field. How many rabbits are in the field now?",Animals,🐰
+A024,"🏈 The football team gained {a} yards on the first play. They gained {b} yards on the second play. How many yards did they gain in total?",Sports,🏈
+A025,"📏 A pencil is {a} centimeters long. Another pencil is {b} centimeters long. What is the total length of both pencils?",School,📏
+A026,"🌻 There are {a} sunflowers on the left side of the fence. There are {b} sunflowers on the right side. How many sunflowers are there in total?",Nature,🌻
+A027,"🚲 {a} bicycles are in the bike rack. {b} more people park their bicycles there. How many bicycles are in the bike rack now?",Transportation,🚲
+A028,"🎯 Jessica scored {a} points in round one. She scored {b} points in round two. How many points did Jessica score in total?",Games,🎯
+A029,"🍓 Mom bought {a} strawberries on Monday. She bought {b} strawberries on Tuesday. How many strawberries did Mom buy in total?",Food,🍓
+A030,"🐠 There are {a} fish in the small tank. There are {b} fish in the large tank. How many fish are there in total?",Animals,🐠
+A031,"🎾 During tennis practice, Anna hit {a} forehands. She hit {b} backhands. How many total shots did Anna hit?",Sports,🎾
+A032,"🎒 David has {a} notebooks in his backpack. He adds {b} more notebooks. How many notebooks does David have now?",School,🎒
+A033,"🌲 There are {a} pine trees on the hill. There are {b} pine trees in the valley. How many pine trees are there in total?",Nature,🌲
+A034,"🛴 {a} scooters are parked near the school. {b} more scooters arrive. How many scooters are there now?",Transportation,🛴
+A035,"🎪 At the carnival, Ben won {a} prizes in the morning. He won {b} prizes in the afternoon. How many prizes did Ben win in total?",Games,🎪
+A036,"🥕 The farmer harvested {a} carrots from the first row. He harvested {b} carrots from the second row. How many carrots did he harvest in total?",Food,🥕
+A037,"🐢 There are {a} turtles on the rock. {b} more turtles climb onto the rock. How many turtles are on the rock now?",Animals,🐢
+A038,"🏐 In volleyball, Team A scored {a} points. Team B scored {b} points. What is the total number of points scored?",Sports,🏐
+A039,"🖊️ Rachel has {a} pens. She buys {b} more pens from the store. How many pens does Rachel have now?",School,🖊️
+A040,"🍂 {a} leaves fell from the tree yesterday. {b} leaves fell today. How many leaves fell in total?",Nature,🍂
+A041,"🔬 A scientist observed {a} cells under the microscope. She found {b} more cells. How many cells did she observe in total?",Science,🔬
+A042,"🧪 In the lab, there are {a} test tubes on the first rack. There are {b} test tubes on the second rack. How many test tubes are there in total?",Science,🧪
+A043,"⚗️ A chemist mixed {a} milliliters of solution A with {b} milliliters of solution B. How many milliliters of solution are there now?",Science,⚗️
+A044,"🌡️ The temperature was {a} degrees in the morning. It rose {b} degrees by afternoon. What is the temperature now?",Science,🌡️
+A045,"🦠 A biologist counted {a} bacteria in sample one. She counted {b} bacteria in sample two. How many bacteria did she count in total?",Science,🦠
+A046,"🔭 An astronomer saw {a} stars through the telescope. Later, she saw {b} more stars. How many stars did she see in total?",Science,🔭
+A047,"⚡ In the first experiment, {a} joules of energy were measured. In the second experiment, {b} joules were measured. What is the total energy measured?",Science,⚡
+A048,"🧲 A magnet attracted {a} paper clips. Another magnet attracted {b} paper clips. How many paper clips were attracted in total?",Science,🧲
+A049,"🌋 The volcano erupted {a} times last month. It erupted {b} times this month. How many times did the volcano erupt in total?",Science,🌋
+A050,"💧 A plant absorbed {a} milliliters of water on Monday. It absorbed {b} milliliters on Tuesday. How many milliliters of water did the plant absorb in total?",Science,💧

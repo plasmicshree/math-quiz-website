@@ -1,0 +1,51 @@
+ID,Template,Category,Emoji
+S001,"🍎 Sarah has {a} apples. She gives {b} apples to her friend. How many apples does Sarah have left?",Food,🍎
+S002,"🐕 There are {a} dogs at the park. {b} dogs go home. How many dogs are still at the park?",Animals,🐕
+S003,"⚽ Tom had {a} soccer balls. He lost {b} soccer balls. How many soccer balls does Tom have now?",Sports,⚽
+S004,"📚 Emma has {a} books. She returns {b} books to the library. How many books does Emma have left?",School,📚
+S005,"🌸 There are {a} flowers in the vase. {b} flowers wilt and are removed. How many flowers are left in the vase?",Nature,🌸
+S006,"🚗 {a} cars are in the parking lot. {b} cars drive away. How many cars are left in the parking lot?",Transportation,🚗
+S007,"🎮 Jake has {a} video games. He trades away {b} games. How many video games does Jake have now?",Games,🎮
+S008,"🍪 Maria baked {a} cookies. Her family ate {b} cookies. How many cookies are left?",Food,🍪
+S009,"🐦 {a} birds are on the fence. {b} birds fly away. How many birds are still on the fence?",Animals,🐦
+S010,"🏀 The team scored {a} points. The referee took away {b} points for a foul. How many points does the team have now?",Sports,🏀
+S011,"✏️ Kevin has {a} pencils. He gives {b} pencils to his classmate. How many pencils does Kevin have left?",School,✏️
+S012,"🌳 There are {a} trees in the park. {b} trees are cut down. How many trees are left in the park?",Nature,🌳
+S013,"🚌 {a} students are on the school bus. {b} students get off at their stop. How many students are still on the bus?",Transportation,🚌
+S014,"🎲 Amy has {a} game tokens. She spends {b} tokens. How many tokens does Amy have left?",Games,🎲
+S015,"🍕 The pizza shop made {a} pizzas. They sold {b} pizzas. How many pizzas are left?",Food,🍕
+S016,"🐱 There are {a} cats at the shelter. {b} cats get adopted. How many cats are still at the shelter?",Animals,🐱
+S017,"⚾ Mike collected {a} baseballs. He gave {b} baseballs to his brother. How many baseballs does Mike have now?",Sports,⚾
+S018,"🖍️ Lisa has {a} crayons. {b} crayons break. How many crayons does Lisa have left?",School,🖍️
+S019,"🦋 {a} butterflies are in the garden. {b} butterflies fly away. How many butterflies are still in the garden?",Nature,🦋
+S020,"✈️ {a} airplanes are at the airport. {b} airplanes take off. How many airplanes are still at the airport?",Transportation,✈️
+S021,"🃏 Sam has {a} playing cards. He loses {b} cards. How many playing cards does Sam have now?",Games,🃏
+S022,"🍩 The bakery had {a} donuts. They sold {b} donuts. How many donuts does the bakery have left?",Food,🍩
+S023,"🐰 There are {a} rabbits in the field. {b} rabbits hop away. How many rabbits are left in the field?",Animals,🐰
+S024,"🏈 The quarterback threw {a} passes. {b} passes were incomplete. How many passes were complete?",Sports,🏈
+S025,"📏 A rope is {a} meters long. {b} meters are cut off. How many meters of rope are left?",School,📏
+S026,"🌻 There are {a} sunflowers in the field. {b} sunflowers are picked. How many sunflowers are left in the field?",Nature,🌻
+S027,"🚲 {a} bicycles are in the bike rack. {b} people take their bicycles. How many bicycles are left in the bike rack?",Transportation,🚲
+S028,"🎯 Jessica had {a} darts. She lost {b} darts. How many darts does Jessica have now?",Games,🎯
+S029,"🍓 Mom bought {a} strawberries. The family ate {b} strawberries. How many strawberries are left?",Food,🍓
+S030,"🐠 There are {a} fish in the tank. {b} fish are moved to another tank. How many fish are left?",Animals,🐠
+S031,"🎾 Anna had {a} tennis balls. {b} tennis balls went over the fence. How many tennis balls does Anna have left?",Sports,🎾
+S032,"🎒 David has {a} stickers in his collection. He gives {b} stickers to his friends. How many stickers does David have left?",School,🎒
+S033,"🌲 There are {a} pine cones under the tree. {b} pine cones are taken by squirrels. How many pine cones are left?",Nature,🌲
+S034,"🛴 {a} scooters are at the playground. {b} kids take their scooters home. How many scooters are left?",Transportation,🛴
+S035,"🎪 Ben had {a} tickets for the carnival. He used {b} tickets. How many tickets does Ben have left?",Games,🎪
+S036,"🥕 The farmer had {a} carrots. He sold {b} carrots at the market. How many carrots does the farmer have left?",Food,🥕
+S037,"🐢 There are {a} turtles at the pond. {b} turtles walk away. How many turtles are still at the pond?",Animals,🐢
+S038,"🏐 Team A had {a} points. They lost {b} points due to a penalty. How many points does Team A have now?",Sports,🏐
+S039,"🖊️ Rachel has {a} markers. {b} markers dry out. How many markers does Rachel have left?",School,🖊️
+S040,"🍂 {a} leaves are on the ground. {b} leaves blow away. How many leaves are left on the ground?",Nature,🍂
+S041,"🔬 A scientist had {a} petri dishes. She used {b} petri dishes for an experiment. How many petri dishes does she have left?",Science,🔬
+S042,"🧪 There were {a} test tubes in the cabinet. {b} test tubes broke during the experiment. How many test tubes are left?",Science,🧪
+S043,"⚗️ A beaker contained {a} milliliters of liquid. {b} milliliters evaporated. How many milliliters of liquid are left?",Science,⚗️
+S044,"🌡️ The temperature was {a} degrees. It dropped {b} degrees overnight. What is the temperature now?",Science,🌡️
+S045,"🦠 A sample had {a} bacteria cells. {b} cells died. How many bacteria cells are still alive?",Science,🦠
+S046,"🔭 An astronomer recorded {a} comets. {b} comets moved out of view. How many comets can still be seen?",Science,🔭
+S047,"⚡ A battery had {a} joules of energy. {b} joules were used. How many joules of energy are left in the battery?",Science,⚡
+S048,"🧲 A magnet held {a} metal objects. {b} objects fell off. How many metal objects are still held by the magnet?",Science,🧲
+S049,"🌋 Scientists predicted {a} volcanic eruptions this year. {b} eruptions have already occurred. How many more eruptions are predicted?",Science,🌋
+S050,"💧 A container held {a} milliliters of water. {b} milliliters leaked out. How many milliliters of water are left in the container?",Science,💧

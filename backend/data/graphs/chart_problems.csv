@@ -1,0 +1,59 @@
+ID,Question1,Answer1,Question2,Answer2,Question3,Answer3,GraphType,Title,Labels,Values,MinGrade
+G001,Which color has the highest value?,Green,What is the total of all values?,15,How many more is Green than Blue?,4,bar,🎨 Favorite Colors,"🔴 Red,🔵 Blue,🟢 Green","5,3,7",5
+G002,How many students scored above 80?,12,What is the most common score range?,70-80,How many students took the test?,30,bar,📝 Test Scores,"50-60,60-70,70-80,80-90,90-100","3,5,10,8,4",6
+G003,Which month had the most rainfall?,July,What is the total rainfall for the summer?,25,How much more rain in July than June?,6,bar,🌧️ Monthly Rainfall,"🌸 May,🌺 June,🌻 July,🌞 August","5,8,14,7",5
+G004,How many more dogs than cats?,15,What is the total number of pets?,85,Which pet is least popular?,Birds,bar,🐾 Pets Survey,"🐕 Dogs,🐈 Cats,🐦 Birds,🐠 Fish","40,25,8,12",5
+G005,Which fruit sold the most?,Apples,What is the difference between Apple and Orange sales?,20,How many total fruits were sold?,120,bar,🍎 Fruit Sales,"🍎 Apples,🍊 Oranges,🍌 Bananas,🍇 Grapes","50,30,25,15",6
+G006,What temperature was recorded on Wednesday?,75,Which day was the coldest?,Monday,What is the average temperature for the week?,73,line,🌡️ Weekly Temperature,"Mon,Tue,Wed,Thu,Fri","70,72,75,74,76",5
+G007,How many books were read in March?,18,Which month had the least books read?,January,What is the total books read in Q1?,45,bar,📚 Books Read,"📅 January,📅 February,📅 March","12,15,18",5
+G008,How many hours of sleep on Friday?,7,What is the total sleep hours for the week?,56,Which night had the most sleep?,Sunday,line,😴 Sleep Hours,"Mon,Tue,Wed,Thu,Fri,Sat,Sun","8,7,8,8,7,9,9",6
+G009,Which sport is most popular?,Soccer,How many total students play sports?,90,How many more play Soccer than Tennis?,25,bar,⚽ Sports Played,"⚽ Soccer,🏀 Basketball,🎾 Tennis,⚾ Baseball","35,25,10,20",5
+G010,Which month had the most sales?,December,What is the total sales for the year?,480,How much more in December than January?,15,bar,💰 Monthly Sales,"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec","30,32,35,38,40,42,45,48,50,45,40,55",6
+G011,How many pizzas were sold on Friday?,45,Which day had the least sales?,Monday,What is the total pizzas sold?,180,bar,🍕 Pizza Sales,"Mon,Tue,Wed,Thu,Fri,Sat,Sun","20,25,28,30,45,25,7",6
+G012,Which animal is seen most often?,Rabbits,What is the total animal count?,75,How many more Rabbits than Deer?,10,bar,🦌 Wildlife Spotted,"🐿️ Squirrels,🐇 Rabbits,🦌 Deer,🦊 Foxes","18,25,15,17",5
+G013,How many students chose blue?,28,Which color is least favorite?,Yellow,What is the total students surveyed?,80,bar,🎨 Favorite Color Survey,"🔴 Red,🔵 Blue,🟡 Yellow,🟢 Green","22,28,10,20",5
+G014,What was the temperature on Thursday?,82,Which day was the hottest?,Saturday,What is the average temperature?,79,line,☀️ Summer Temperature,"Mon,Tue,Wed,Thu,Fri,Sat","75,78,80,82,81,84",6
+G015,How many cookies sold in Week 3?,55,Which week had lowest sales?,Week 1,What is the total cookies sold?,180,bar,🍪 Cookie Sales,"Week 1,Week 2,Week 3,Week 4","40,45,55,40",5
+G016,Which vegetable is most popular?,Carrots,What is the total votes?,100,How many more Carrots than Broccoli?,15,bar,🥕 Vegetable Preference,"🥕 Carrots,🥦 Broccoli,🌽 Corn,🍅 Tomatoes","30,15,25,30",6
+G017,How many bikes sold in March?,22,Which month had most bike sales?,May,What is the total bikes sold?,80,bar,🚲 Bike Sales,"March,April,May,June","22,18,25,15",5
+G018,What was the score on Test 3?,88,Which test had the lowest score?,Test 1,What is the average score?,85,bar,📊 Test Results,"Test 1,Test 2,Test 3,Test 4","82,85,88,86",5
+G019,How many cupcakes sold on Saturday?,65,Which day had least sales?,Wednesday,What is the total cupcakes sold?,260,bar,🧁 Cupcake Sales,"Wed,Thu,Fri,Sat,Sun","30,40,55,65,70",6
+G020,Which ice cream flavor is most popular?,Chocolate,What is the total scoops sold?,200,How many more Chocolate than Mint?,35,bar,🍦 Ice Cream Flavors,"🍫 Chocolate,🍓 Strawberry,🍦 Vanilla,🌿 Mint","70,50,55,25",6
+G021,How many flowers bloomed in May?,42,Which month had most blooms?,June,What is the total flowers?,140,bar,🌸 Flowers Blooming,"April,May,June,July","30,42,48,20",6
+G022,What was Monday's step count?,8500,Which day had most steps?,Friday,What is the average daily steps?,9200,line,👟 Daily Steps,"Mon,Tue,Wed,Thu,Fri","8500,9000,9500,9200,10000",6
+G023,How many movies watched in Summer?,15,Which season had least movies?,Winter,What is the total movies watched?,48,bar,🎬 Movies Watched,"Winter,Spring,Summer,Fall","10,12,15,11",5
+G024,Which subject has most students?,Math,What is the total students?,120,How many more in Math than Art?,20,bar,📐 Class Enrollment,"📐 Math,📖 English,🎨 Art,🔬 Science","40,35,20,25",6
+G025,How many points scored in Game 3?,28,Which game had highest score?,Game 4,What is the total points?,100,bar,🏆 Game Scores,"Game 1,Game 2,Game 3,Game 4","22,25,28,25",5
+G026,What was the rainfall in Week 2?,3.5,Which week was driest?,Week 4,What is the total rainfall?,12,bar,💧 Weekly Rainfall,"Week 1,Week 2,Week 3,Week 4","3,3.5,4,1.5",5
+G027,How many birds seen on Wednesday?,18,Which day had most birds?,Saturday,What is the total birds spotted?,75,bar,🐦 Bird Watching,"Mon,Wed,Fri,Sat,Sun","12,18,15,20,10",6
+G028,Which drink is most popular?,Water,What is the total drinks sold?,180,How many more Water than Soda?,40,bar,🥤 Drink Sales,"💧 Water,🥤 Soda,🧃 Juice,☕ Coffee","70,30,50,30",6
+G029,How many goals scored in March?,12,Which month had most goals?,May,What is the total goals?,45,bar,⚽ Goals Scored,"March,April,May,June","12,10,15,8",5
+G030,What was Thursday's high temp?,68,Which day was coolest?,Monday,What is the average temperature?,65,line,🌤️ Daily High Temps,"Mon,Tue,Wed,Thu,Fri","62,64,66,68,65",5
+G031,How many tickets sold on Friday?,120,Which day had least sales?,Monday,What is the total tickets sold?,420,bar,🎟️ Ticket Sales,"Mon,Tue,Wed,Thu,Fri,Sat","60,70,80,90,120,0",6
+G032,Which planet is most interesting?,Mars,What is the total votes?,150,How many more for Mars than Venus?,25,bar,🪐 Favorite Planets,"🪐 Saturn,🔴 Mars,🌍 Earth,♀️ Venus","35,50,40,25",6
+G033,How many pages read on Day 4?,55,Which day had most reading?,Day 5,What is the total pages read?,220,bar,📖 Pages Read,"Day 1,Day 2,Day 3,Day 4,Day 5","40,45,50,55,30",6
+G034,What was the wind speed on Tuesday?,15,Which day was windiest?,Thursday,What is the average wind speed?,14,line,💨 Wind Speed,"Mon,Tue,Wed,Thu,Fri","12,15,14,18,11",5
+G035,How many emails sent on Wednesday?,45,Which day had most emails?,Friday,What is the total emails sent?,200,bar,📧 Emails Sent,"Mon,Tue,Wed,Thu,Fri","35,40,45,30,50",6
+G036,Which color car is most common?,Silver,What is the total cars counted?,240,How many more Silver than Red?,30,bar,🚗 Car Colors,"🔴 Red,🔵 Blue,⚪ Silver,⚫ Black","50,60,80,50",6
+G037,How many laps swam on Thursday?,20,Which day had most laps?,Saturday,What is the total laps?,85,bar,🏊 Swimming Laps,"Tue,Thu,Sat,Sun","18,20,25,22",5
+G038,What was the humidity on Wednesday?,65,Which day was most humid?,Friday,What is the average humidity?,63,line,💧 Humidity Levels,"Mon,Tue,Wed,Thu,Fri","60,62,65,64,68",5
+G039,How many sandwiches sold on Thursday?,38,Which day had least sales?,Monday,What is the total sandwiches sold?,165,bar,🥪 Sandwich Sales,"Mon,Tue,Wed,Thu,Fri","28,32,35,38,32",6
+G040,Which hobby is most popular?,Reading,What is the total responses?,200,How many more Reading than Gaming?,25,bar,🎮 Favorite Hobbies,"📚 Reading,🎮 Gaming,🎨 Art,⚽ Sports","60,35,45,60",6
+G041,How many miles biked on Wednesday?,12,Which day had most miles?,Friday,What is the total miles?,50,bar,🚴 Biking Distance,"Mon,Tue,Wed,Thu,Fri","8,10,12,10,10",5
+G042,What was attendance on Tuesday?,28,Which day had best attendance?,Thursday,What is the average attendance?,27,bar,✅ Class Attendance,"Mon,Tue,Wed,Thu,Fri","26,28,27,29,25",5
+G043,How many songs downloaded in July?,45,Which month had most downloads?,September,What is the total downloads?,170,bar,🎵 Song Downloads,"July,Aug,Sep,Oct","45,40,50,35",5
+G044,Which shoe size is most common?,7,What is the total students measured?,100,How many students wear size 8?,25,bar,👟 Shoe Sizes,"Size 6,Size 7,Size 8,Size 9","20,35,25,20",6
+G045,How many photos taken on Saturday?,85,Which day had most photos?,Sunday,What is the total photos taken?,320,bar,📸 Photos Taken,"Fri,Sat,Sun,Mon","70,85,90,75",6
+G046,What was pressure on Wednesday?,30.1,Which day had highest pressure?,Friday,What is the average pressure?,30.0,line,🌡️ Air Pressure,"Mon,Tue,Wed,Thu,Fri","29.9,30.0,30.1,29.8,30.2",5
+G047,How many visitors on Thursday?,150,Which day had most visitors?,Saturday,What is the total visitors?,550,bar,🏛️ Museum Visitors,"Thu,Fri,Sat,Sun","150,120,180,100",6
+G048,Which subject has highest grade?,Science,What is the average of all grades?,85,How many points higher is Science than History?,8,bar,📊 Subject Grades,"📐 Math,📖 English,🔬 Science,📜 History","84,86,90,82",5
+G049,How many calories burned on Tuesday?,450,Which day had most calories burned?,Friday,What is the total calories burned?,2100,bar,🔥 Calories Burned,"Mon,Tue,Wed,Thu,Fri","400,450,420,380,450",6
+G050,What was visibility on Thursday?,8,Which day had best visibility?,Saturday,What is the average visibility?,7,line,👁️ Visibility Miles,"Tue,Wed,Thu,Fri,Sat","6,7,8,7,9",5
+G051,How many plants watered on Wednesday?,22,Which day had most plants watered?,Friday,What is the total plants watered?,90,bar,🌱 Plants Watered,"Mon,Tue,Wed,Thu,Fri","18,20,22,12,18",5
+G052,Which season has most birthdays?,Summer,What is the total birthdays?,80,How many more in Summer than Winter?,10,bar,🎂 Birthday Seasons,"🌸 Spring,☀️ Summer,🍂 Fall,❄️ Winter","20,25,20,15",5
+G053,How many questions answered on Quiz 3?,18,Which quiz had most questions?,Quiz 4,What is the total questions?,70,bar,❓ Quiz Questions,"Quiz 1,Quiz 2,Quiz 3,Quiz 4","15,17,18,20",5
+G054,What was the pH level on Tuesday?,7.2,Which day had highest pH?,Thursday,What is the average pH level?,7.1,line,🧪 pH Levels,"Mon,Tue,Wed,Thu,Fri","7.0,7.2,7.1,7.3,6.9",5
+G055,How many sodas sold on Wednesday?,32,Which day had most soda sales?,Friday,What is the total sodas sold?,140,bar,🥤 Soda Sales,"Mon,Tue,Wed,Thu,Fri","25,28,32,30,25",6
+G056,Which instrument is most popular?,Piano,What is the total students?,90,How many more Piano than Drums?,15,bar,🎹 Musical Instruments,"🎹 Piano,🎸 Guitar,🥁 Drums,🎺 Trumpet","30,25,15,20",5
+G057,How many balloons popped on Day 3?,8,Which day had most popped?,Day 4,What is the total balloons popped?,30,bar,🎈 Balloons Popped,"Day 1,Day 2,Day 3,Day 4,Day 5","5,6,8,9,2",6
+G058,What was noise level on Wednesday?,65,Which day was noisiest?,Friday,What is the average noise level?,63,line,🔊 Noise Levels,"Mon,Tue,Wed,Thu,Fri","60,62,65,64,68",5
