@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Firebase Debug Console</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #f5f5f5; }
+        .log { 
+            background: white; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border-left: 4px solid #007bff; 
+            border-radius: 4px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .error { border-left-color: #dc3545; }
+        .success { border-left-color: #28a745; }
+        .warning { border-left-color: #ffc107; }
+        h1 { color: #333; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        .status { font-size: 1.2em; font-weight: bold; padding: 10px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Firebase Debug Console</h1>
+    <div class="status" id="status">Initializing...</div>
+    
+    <button onclick="testConnection()">Test Connection</button>
+    <button onclick="testRead()">Test Read</button>
+    <button onclick="testWrite()">Test Write (Simple)</button>
+    <button onclick="testWriteWithData()">Test Write (Full Session)</button>
+    <button onclick="clearLogs()">Clear Logs</button>
+    
+    <div class="log" id="logs"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        const logsDiv = document.getElementById('logs');
+        const statusDiv = document.getElementById('status');
+        let db = null;
+
+        function log(message, type = 'info') {
+            const line = document.createElement('div');
+            line.className = `log ${type}`;
+            line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logsDiv.appendChild(line);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function updateStatus(text, color = '#007bff') {
+            statusDiv.textContent = text;
+            statusDiv.style.color = color;
+        }
+
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCfAwDRE9JJFhW_j6_hg3wIp0oIX6c5-M0",
+            authDomain: "math-app-d6f00.firebaseapp.com",
+            projectId: "math-app-d6f00",
+            storageBucket: "math-app-d6f00.appspot.com",
+            messagingSenderId: "333699287838",
+            appId: "1:333699287838:web:343907f2b4ebe2ce6a170f"
+        };
+
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            log('✓ Firebase initialized', 'success');
+            log('✓ Firestore instance created', 'success');
+            log(`Project ID: ${firebaseConfig.projectId}`, 'info');
+            log(`Auth Domain: ${firebaseConfig.authDomain}`, 'info');
+            
+            // Enable logging to see what's happening
+            firebase.firestore.setLogLevel('debug');
+            
+            updateStatus('✓ Firebase Ready', '#28a745');
+        } catch (error) {
+            log(`✗ Firebase init error: ${error.message}`, 'error');
+            log(`Error code: ${error.code}`, 'error');
+            updateStatus('✗ Firebase Failed', '#dc3545');
+        }
+
+        async function testConnection() {
+            log('Testing Firebase connection...');
+            updateStatus('Testing...', '#ffc107');
+            
+            try {
+                // Try to access Firestore
+                const test = await db.collection('_test').doc('_test').get();
+                log('✓ Connection successful', 'success');
+                updateStatus('✓ Connected', '#28a745');
+            } catch (error) {
+                log(`✗ Connection failed: ${error.message}`, 'error');
+                updateStatus('✗ Connection Failed', '#dc3545');
+            }
+        }
+
+        async function testRead() {
+            log('Testing READ permission...');
+            updateStatus('Testing Read...', '#ffc107');
+            
+            try {
+                const snapshot = await db.collection('users').doc('test@test.com').collection('test').get();
+                log(`✓ READ allowed - found ${snapshot.size} docs`, 'success');
+                updateStatus('✓ Read Works', '#28a745');
+            } catch (error) {
+                log(`✗ READ error: ${error.message}`, 'error');
+                updateStatus('✗ Read Failed', '#dc3545');
+            }
+        }
+
+        async function testWrite() {
+            log('Testing WRITE permission (simple)...');
+            updateStatus('Testing Write...', '#ffc107');
+            
+            try {
+                await db.collection('users').doc('test@test.com').collection('test').doc('simple').set({
+                    test: true,
+                    timestamp: new Date()
+                });
+                log('✓ WRITE successful', 'success');
+                updateStatus('✓ Write Works', '#28a745');
+            } catch (error) {
+                log(`✗ WRITE error: ${error.code} - ${error.message}`, 'error');
+                updateStatus('✗ Write Failed', '#dc3545');
+            }
+        }
+
+        async function testWriteWithData() {
+            log('Testing WRITE with full session data...');
+            updateStatus('Testing Full Write...', '#ffc107');
+            
+            const testSessionData = {
+                sessionId: 'test-session-' + Date.now(),
+                userName: 'Test User',
+                grade: 3,
+                section: 'addition',
+                questions: [
+                    {
+                        question: '2 + 3 = ?',
+                        userAnswer: 5,
+                        correctAnswer: 5,
+                        correct: true,
+                        pointsEarned: 10,
+                        timestamp: new Date()
+                    }
+                ],
+                totalScore: 10,
+                startTime: new Date(),
+                endTime: new Date()
+            };
+            
+            try {
+                log(`Attempting write to: users/test@test.com/sessions/${testSessionData.sessionId}`);
+                
+                await db.collection('users')
+                    .doc('test@test.com')
+                    .collection('sessions')
+                    .doc(testSessionData.sessionId)
+                    .set(testSessionData);
+                
+                log('✓ Full session write successful', 'success');
+                updateStatus('✓ Session Write Works', '#28a745');
+            } catch (error) {
+                log(`✗ WRITE error: ${error.code} - ${error.message}`, 'error');
+                updateStatus('✗ Write Failed', '#dc3545');
+            }
+        }
+
+        function clearLogs() {
+            logsDiv.innerHTML = '';
+            log('Logs cleared');
+        }
+
+        // Initial test
+        setTimeout(() => testConnection(), 1000);
+    </script>
+</body>
+</html>

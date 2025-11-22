@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>App Initialization Diagnostic</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-left: 4px solid #007bff;
+            border-radius: 4px;
+        }
+        pre {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            max-height: 300px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>App Initialization Diagnostic</h1>
+        
+        <div class="section">
+            <h2>Step 1: Enter Name & Email</h2>
+            <p>Fill in your information and click "Start Quiz"</p>
+            <input type="text" id="test-name" placeholder="Enter your name" value="TestUser">
+            <input type="email" id="test-email" placeholder="Enter your email" value="test@example.com">
+            <button onclick="testSaveUserInfo()">Save User Info</button>
+            <p id="step1-status"></p>
+        </div>
+        
+        <div class="section">
+            <h2>Step 2: Simulate Grade Selection</h2>
+            <p>Set Grade 3 and verify initialization</p>
+            <button onclick="testGradeSelection()">Set Grade 3 & Load Questions</button>
+            <p id="step2-status"></p>
+        </div>
+        
+        <div class="section">
+            <h2>Step 3: Page Refresh Simulation</h2>
+            <p>Reload the page to verify persistence</p>
+            <button onclick="testPageRefresh()">Reload Page</button>
+            <p id="step3-status"></p>
+        </div>
+        
+        <div class="section">
+            <h2>Current localStorage Contents</h2>
+            <pre id="storage-contents">Loading...</pre>
+        </div>
+        
+        <div class="section">
+            <h2>Actions</h2>
+            <button onclick="location.href='/'">Go to App</button>
+            <button onclick="location.href='/check-storage.html'">Check Storage</button>
+        </div>
+    </div>
+    
+    <script>
+        function updateStorageDisplay() {
+            const contents = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                contents[key] = localStorage.getItem(key);
+            }
+            document.getElementById('storage-contents').textContent = JSON.stringify(contents, null, 2);
+        }
+        
+        function testSaveUserInfo() {
+            const name = document.getElementById('test-name').value;
+            const email = document.getElementById('test-email').value;
+            
+            localStorage.setItem('mathQuizUserName', name);
+            localStorage.setItem('mathQuizUserEmail', email);
+            
+            const status = document.getElementById('step1-status');
+            status.innerHTML = `<span class="success">✓ Saved: Name="${name}", Email="${email}"</span>`;
+            updateStorageDisplay();
+        }
+        
+        function testGradeSelection() {
+            const name = localStorage.getItem('mathQuizUserName');
+            const email = localStorage.getItem('mathQuizUserEmail');
+            
+            if (!name || !email) {
+                document.getElementById('step2-status').innerHTML = '<span class="error">✗ User info not saved. Complete Step 1 first.</span>';
+                return;
+            }
+            
+            localStorage.setItem('mathQuizGrade', '3');
+            const status = document.getElementById('step2-status');
+            status.innerHTML = `<span class="success">✓ Set Grade 3 in localStorage</span>`;
+            updateStorageDisplay();
+        }
+        
+        function testPageRefresh() {
+            document.getElementById('step3-status').innerHTML = '<span class="info">Reloading in 2 seconds...</span>';
+            setTimeout(() => {
+                window.location.href = '/?t=' + Date.now();
+            }, 2000);
+        }
+        
+        // Update display on load and every second
+        updateStorageDisplay();
+        setInterval(updateStorageDisplay, 1000);
+    </script>
+</body>
+</html>
