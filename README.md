@@ -1,5 +1,11 @@
 # Math Quiz Website
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/downloads/)
+[![Flask](https://img.shields.io/badge/Flask-2.0%2B-lightgrey)](https://flask.palletsprojects.com/)
+[![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)]()
+[![GitHub stars](https://img.shields.io/github/stars/plasmicshree/math-quiz-website)](https://github.com/plasmicshree/math-quiz-website/stargazers)
+
 A grade-based interactive math quiz application supporting grades 1-6 with dynamic question generation, visual explanations, and instant feedback.
 
 ## Project Structure
