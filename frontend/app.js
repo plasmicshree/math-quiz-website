@@ -508,7 +508,149 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Renders Grade 1 Addition visualization with blocks
+     * ============================================================
+     * SHARED SVG BLOCK RENDERING UTILITIES
+     * ============================================================
+     * Used by multiple grades for block-based visualization
+     * Supports configurable sections per block (5, 10, etc.)
+     */
+    
+    /**
+     * Render blocks for a single number with configurable sections per block
+     * @param {Object} numberVisual - {full_blocks, remainder, total}
+     * @param {String} color - Color code (e.g., '#4CAF50')
+     * @param {Number} sectionsPerBlock - Sections in each block (5 or 10)
+     * @returns {String} SVG as HTML string
+     */
+    function renderBlocksForNumber(numberVisual, color, sectionsPerBlock = 5) {
+        try {
+            const blockWidth = 30;
+            const sectionHeight = 100 / sectionsPerBlock; // Dynamic height based on section count
+            const blockHeight = 100;
+            const gap = 10;
+            const numBlocks = numberVisual.full_blocks + (numberVisual.remainder > 0 ? 1 : 0);
+            const svgWidth = Math.max(50, numBlocks * (blockWidth + gap) + 10);
+            
+            let svg = `<svg width="${svgWidth}" height="120" viewBox="0 0 ${svgWidth} 120" xmlns="http://www.w3.org/2000/svg" style="margin: 10px auto; display: block;">`;
+            
+            // Full blocks
+            for (let b = 0; b < numberVisual.full_blocks; b++) {
+                const x = b * (blockWidth + gap) + 5;
+                svg += `<g><rect x="${x}" y="0" width="${blockWidth}" height="${blockHeight}" fill="none" stroke="#333" stroke-width="2"/>`;
+                for (let s = 0; s < sectionsPerBlock; s++) {
+                    const sy = s * sectionHeight;
+                    svg += `<rect x="${x}" y="${sy}" width="${blockWidth}" height="${sectionHeight}" fill="${color}" stroke="#333" stroke-width="1"/>`;
+                }
+                svg += `</g>`;
+            }
+            
+            // Partial block if needed
+            if (numberVisual.remainder > 0) {
+                const x = numberVisual.full_blocks * (blockWidth + gap) + 5;
+                svg += `<g><rect x="${x}" y="0" width="${blockWidth}" height="${blockHeight}" fill="none" stroke="#333" stroke-width="2"/>`;
+                for (let s = 0; s < sectionsPerBlock; s++) {
+                    const sy = s * sectionHeight;
+                    const fillColor = s < numberVisual.remainder ? color : '#e8e8e8';
+                    svg += `<rect x="${x}" y="${sy}" width="${blockWidth}" height="${sectionHeight}" fill="${fillColor}" stroke="#333" stroke-width="1"/>`;
+                }
+                svg += `</g>`;
+            }
+            
+            svg += '</svg>';
+            return svg;
+        } catch (error) {
+            console.error('[SVG-BLOCKS] Error:', error);
+            return '<svg><text x="10" y="20" fill="red">Error rendering blocks</text></svg>';
+        }
+    }
+    
+    /**
+     * Render solution blocks showing combined result with color distribution
+     * @param {Object} visual - {first, second, result} each with {full_blocks, remainder, total}
+     * @param {Number} firstNum - Value for first number
+     * @param {Number} secondNum - Value for second number
+     * @param {String} firstColor - Color for first number sections (e.g., '#4CAF50')
+     * @param {String} secondColor - Color for second number sections (e.g., '#2196F3')
+     * @param {Number} sectionsPerBlock - Sections in each block (5 or 10)
+     * @returns {String} SVG as HTML string
+     */
+    function renderSolutionBlocks(visual, firstNum, secondNum, firstColor, secondColor, sectionsPerBlock = 5) {
+        const blockWidth = 30;
+        const sectionHeight = 100 / sectionsPerBlock; // Dynamic height based on section count
+        const blockHeight = 100;
+        const gap = 10;
+        const totalNum = visual.result.total;
+        const numBlocks = Math.ceil(totalNum / sectionsPerBlock);
+        const svgWidth = Math.max(80, numBlocks * (blockWidth + gap) + 10);
+        
+        let svg = `<svg width="${svgWidth}" height="120" viewBox="0 0 ${svgWidth} 120" style="margin: 10px auto; display: block;">`;
+        
+        let sectionIndex = 0;
+        
+        for (let b = 0; b < numBlocks; b++) {
+            const x = b * (blockWidth + gap) + 5;
+            svg += `<g><rect x="${x}" y="0" width="${blockWidth}" height="${blockHeight}" fill="none" stroke="#333" stroke-width="2"/>`;
+            
+            for (let s = 0; s < sectionsPerBlock; s++) {
+                const sy = s * sectionHeight;
+                let fillColor = '#e8e8e8';
+                
+                if (sectionIndex < firstNum) {
+                    fillColor = firstColor; // Color for first number
+                } else if (sectionIndex < totalNum) {
+                    fillColor = secondColor; // Color for second number
+                }
+                
+                svg += `<rect x="${x}" y="${sy}" width="${blockWidth}" height="${sectionHeight}" fill="${fillColor}" stroke="#333" stroke-width="1"/>`;
+                sectionIndex++;
+            }
+            svg += `</g>`;
+        }
+        
+        svg += '</svg>';
+        return svg;
+    }
+
+    /**
+     * Utility: Reveal addition solution blocks for current grade
+     * Works for Grade 1, Grade 2, and any future grades using addition-solution-hidden
+     * @param {Number} grade - Current grade level
+     * @param {String} section - Current section
+     */
+    function revealAdditionSolution(grade, section) {
+        if (section === 'addition' && [1, 2].includes(grade)) {
+            const solutionDiv = document.getElementById('addition-solution-hidden');
+            if (solutionDiv) {
+                solutionDiv.style.display = 'block';
+                console.log(`[SOLUTION] Revealed for Grade ${grade} Addition`);
+            }
+        }
+    }
+    
+    /**
+     * Utility: Reveal subtraction solution blocks for current grade
+     * Works for Grade 2 (and future grades) using subtraction-solution-hidden
+     * @param {Number} grade - Current grade level
+     * @param {String} section - Current section
+     */
+    function revealSubtractionSolution(grade, section) {
+        if (section === 'subtraction' && [2].includes(grade)) {
+            const solutionDiv = document.getElementById('subtraction-solution-hidden');
+            if (solutionDiv) {
+                solutionDiv.style.display = 'block';
+                console.log(`[SOLUTION] Revealed for Grade ${grade} Subtraction`);
+            }
+        }
+    }
+
+    /**
+     * ============================================================
+     * GRADE-SPECIFIC RENDERING FUNCTIONS
+     * ============================================================
+     */
+    
+    /**
+     * Renders Grade 1 Addition visualization with blocks (5 sections per block)
      * Completely isolated from fractions visualization
      */
     function renderGrade1Addition(data, chartContainer) {
@@ -533,7 +675,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // First number blocks (GREEN)
             html += '<div style="text-align:center;">';
-            html += renderBlocksForNumber(visual.first, '#4CAF50', 'First');
+            html += renderBlocksForNumber(visual.first, '#4CAF50', 5); // Grade 1: 5 sections
             html += `<div style="font-weight:bold; margin-top:8px; font-size:1.2rem;">${data.first_number}</div>`;
             html += '</div>';
             
@@ -542,7 +684,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Second number blocks (BLUE)
             html += '<div style="text-align:center;">';
-            html += renderBlocksForNumber(visual.second, '#2196F3', 'Second');
+            html += renderBlocksForNumber(visual.second, '#2196F3', 5); // Grade 1: 5 sections
             html += `<div style="font-weight:bold; margin-top:8px; font-size:1.2rem;">${data.second_number}</div>`;
             html += '</div>';
             
@@ -552,13 +694,17 @@ document.addEventListener('DOMContentLoaded', () => {
             html += '<div id="addition-solution-hidden" style="display:none; padding:20px; background:#f0f8ff; border-radius:8px; border-left:4px solid #2196F3;">';
             html += '<div style="font-weight:bold; margin-bottom:12px; font-size:1.05rem;">✓ Solution:</div>';
             html += '<div style="text-align:center;">';
-            html += renderSolutionBlocks(visual, data.first_number, data.second_number, '#4CAF50', '#2196F3');
+            html += renderSolutionBlocks(visual, data.first_number, data.second_number, '#4CAF50', '#2196F3', 5); // Grade 1: 5 sections
             html += `<div style="font-weight:bold; margin-top:12px; font-size:1.1rem;">${data.first_number} + ${data.second_number} = ${data.answer}</div>`;
             html += '</div>';
             html += '</div>';
             
             chartContainer.innerHTML = html;
+            console.log('[GRADE1-ADD] innerHTML set successfully, HTML length:', html.length);
             chartContainer.style.display = 'block';
+            chartContainer.style.visibility = 'visible';
+            chartContainer.style.opacity = '1';
+            console.log('[GRADE1-ADD] display set to block, visibility to visible');
             console.log('[GRADE1-ADD] ✓ Visualization rendered successfully');
             return true;
         } catch (error) {
@@ -569,81 +715,251 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     /**
-     * Helper: Render blocks for a single number
+     * Renders Grade 2 Addition visualization with blocks (10 sections per block)
      */
-    function renderBlocksForNumber(numberVisual, color, label) {
-        const blockWidth = 30;
-        const blockHeight = 100;
-        const gap = 10;
-        const numBlocks = numberVisual.full_blocks + (numberVisual.remainder > 0 ? 1 : 0);
-        const svgWidth = Math.max(50, numBlocks * (blockWidth + gap) + 10);
-        
-        let svg = `<svg width="${svgWidth}" height="120" viewBox="0 0 ${svgWidth} 120" style="margin: 10px auto; display: block;">`;
-        
-        // Full blocks
-        for (let b = 0; b < numberVisual.full_blocks; b++) {
-            const x = b * (blockWidth + gap) + 5;
-            svg += `<g><rect x="${x}" y="0" width="${blockWidth}" height="${blockHeight}" fill="none" stroke="#333" stroke-width="2"/>`;
-            for (let s = 0; s < 5; s++) {
-                const sy = s * 20;
-                svg += `<rect x="${x}" y="${sy}" width="${blockWidth}" height="20" fill="${color}" stroke="#333" stroke-width="1"/>`;
+    function renderGrade2Addition(data, chartContainer) {
+        try {
+            console.log('[GRADE2-ADD] Rendering with data:', data);
+            
+            if (!data.visual || !data.first_number || !data.second_number || !data.answer) {
+                console.error('[GRADE2-ADD] Missing required fields:', {
+                    hasVisual: !!data.visual,
+                    hasFirstNumber: !!data.first_number,
+                    hasSecondNumber: !!data.second_number,
+                    hasAnswer: !!data.answer,
+                    allData: data
+                });
+                return false;
             }
-            svg += `</g>`;
-        }
-        
-        // Partial block if needed
-        if (numberVisual.remainder > 0) {
-            const x = numberVisual.full_blocks * (blockWidth + gap) + 5;
-            svg += `<g><rect x="${x}" y="0" width="${blockWidth}" height="${blockHeight}" fill="none" stroke="#333" stroke-width="2"/>`;
-            for (let s = 0; s < 5; s++) {
-                const sy = s * 20;
-                const fillColor = s < numberVisual.remainder ? color : '#e8e8e8';
-                svg += `<rect x="${x}" y="${sy}" width="${blockWidth}" height="20" fill="${fillColor}" stroke="#333" stroke-width="1"/>`;
+            
+            // Validate visual structure
+            if (!data.visual.first || !data.visual.second || !data.visual.result) {
+                console.error('[GRADE2-ADD] Invalid visual structure:', data.visual);
+                return false;
             }
-            svg += `</g>`;
+            
+            const visual = data.visual;
+            let html = '';
+            
+            // PROBLEM DISPLAY: First Number + Second Number
+            html += '<div style="display:flex; gap:20px; justify-content:center; flex-wrap:wrap; padding:20px; background:#f9f9f9; border-radius:8px; margin-bottom:20px;">';
+            
+            // First number blocks (GREEN)
+            html += '<div style="text-align:center;">';
+            const firstBlocksSvg = renderBlocksForNumber(visual.first, '#4CAF50', 10); // Grade 2: 10 sections
+            console.log('[GRADE2-ADD] First blocks SVG length:', firstBlocksSvg.length);
+            html += firstBlocksSvg;
+            html += `<div style="font-weight:bold; margin-top:8px; font-size:1.2rem;">${data.first_number}</div>`;
+            html += '</div>';
+            
+            // Plus sign
+            html += '<div style="font-size:36px; font-weight:bold; display:flex; align-items:center;">+</div>';
+            
+            // Second number blocks (BLUE)
+            html += '<div style="text-align:center;">';
+            const secondBlocksSvg = renderBlocksForNumber(visual.second, '#2196F3', 10); // Grade 2: 10 sections
+            console.log('[GRADE2-ADD] Second blocks SVG length:', secondBlocksSvg.length);
+            html += secondBlocksSvg;
+            html += `<div style="font-weight:bold; margin-top:8px; font-size:1.2rem;">${data.second_number}</div>`;
+            html += '</div>';
+            
+            html += '</div>';
+            
+            // SOLUTION DISPLAY (Hidden initially)
+            html += '<div id="addition-solution-hidden" style="display:none; padding:20px; background:#f0f8ff; border-radius:8px; border-left:4px solid #2196F3;">';
+            html += '<div style="font-weight:bold; margin-bottom:12px; font-size:1.05rem;">✓ Solution:</div>';
+            html += '<div style="text-align:center;">';
+            const solutionSvg = renderSolutionBlocks(visual, data.first_number, data.second_number, '#4CAF50', '#2196F3', 10); // Grade 2: 10 sections
+            console.log('[GRADE2-ADD] Solution SVG length:', solutionSvg.length);
+            html += solutionSvg;
+            html += `<div style="font-weight:bold; margin-top:12px; font-size:1.1rem;">${data.first_number} + ${data.second_number} = ${data.answer}</div>`;
+            html += '</div>';
+            html += '</div>';
+            
+            chartContainer.innerHTML = html;
+            console.log('[GRADE2-ADD] innerHTML set successfully, HTML length:', html.length);
+            chartContainer.style.display = 'block';
+            chartContainer.style.visibility = 'visible';
+            chartContainer.style.opacity = '1';
+            console.log('[GRADE2-ADD] display set to block, visibility to visible');
+            console.log('[GRADE2-ADD] ✓ Visualization rendered successfully');
+            return true;
+        } catch (error) {
+            console.error('[GRADE2-ADD] Error rendering visualization:', error);
+            console.error('[GRADE2-ADD] Error stack:', error.stack);
+            chartContainer.innerHTML = `<div style="color:red; padding:20px;"><strong>Error:</strong> ${error.message}</div>`;
+            return false;
         }
-        
-        svg += '</svg>';
-        return svg;
+    }
+
+    /**
+     * ============================================================
+     * SUBTRACTION RENDERING FUNCTIONS
+     * ============================================================
+     * "Take Away" visualization: Shows starting amount, subtract amount, result
+     */
+    
+    /**
+     * Renders subtraction visualization with "take away" concept
+     * Problem: Shows Start with (green blocks) and Take away (red blocks) separately
+     * Solution: Shows overlaid visualization so student can see which sections were removed
+     * @param {Object} data - Question data with visual, minuend, subtrahend
+     * @param {HTMLElement} chartContainer - Container to render into
+     * @param {Number} sectionsPerBlock - Sections in each block (5, 10, etc.)
+     * @returns {Boolean} Success status
+     */
+    function renderSubtractionVisualization(data, chartContainer, sectionsPerBlock = 5) {
+        try {
+            console.log('[SUBTRACTION-VIZ] Rendering with data:', data);
+            
+            if (!data.visual || !data.minuend || !data.subtrahend) {
+                console.error('[SUBTRACTION-VIZ] Missing required fields');
+                return false;
+            }
+            
+            const visual = data.visual;
+            let html = '';
+            
+            // PROBLEM DISPLAY: Separate Start with and Take away visualizations
+            html += '<div style="padding:20px; background:#f9f9f9; border-radius:8px; margin-bottom:20px;">';
+            
+            // Instructions
+            html += '<div style="text-align:center; margin-bottom:20px; font-size:0.95rem; color:#666;">';
+            html += '<strong style="display:block; margin-bottom:8px;">Count the GREEN sections only:</strong>';
+            html += '<span style="font-size:1.1rem; font-weight:bold;">' + data.minuend + ' − ' + data.subtrahend + ' = ?</span>';
+            html += '</div>';
+            
+            // Visualization: Start with (GREEN) and Take away (RED) - SEPARATE, NO OVERLAP
+            html += '<div style="display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:30px; margin:30px 0;">';
+            
+            // START WITH: Full green blocks
+            html += '<div style="text-align:center;">';
+            html += '<div style="font-size:0.9rem; color:#666; font-weight:600; margin-bottom:12px;">Start with:</div>';
+            html += renderBlocksForNumber(visual.total, '#4CAF50', sectionsPerBlock);
+            html += '<div style="font-weight:bold; margin-top:8px; font-size:1.1rem;">' + data.minuend + '</div>';
+            html += '</div>';
+            
+            // Minus sign
+            html += '<div style="font-size:32px; font-weight:bold; display:flex; align-items:center; color:#666;">−</div>';
+            
+            // TAKE AWAY: Red blocks showing only what to subtract
+            html += '<div style="text-align:center;">';
+            html += '<div style="font-size:0.9rem; color:#666; font-weight:600; margin-bottom:12px;">Take away:</div>';
+            html += renderBlocksForNumber(visual.subtract, '#FF6B6B', sectionsPerBlock);
+            html += '<div style="font-weight:bold; margin-top:8px; font-size:1.1rem;">' + data.subtrahend + '</div>';
+            html += '</div>';
+            
+            html += '</div>';
+            
+            // Student prompt
+            html += '<div style="text-align:center; margin-top:20px; padding:16px; background:#e8f5e9; border-radius:8px; border-left:4px solid #4CAF50;">';
+            html += '<div style="font-size:0.95rem; color:#2E7D32;"><strong>👉 How many GREEN sections are left?</strong></div>';
+            html += '</div>';
+            
+            html += '</div>';
+            
+            // SOLUTION DISPLAY (Hidden initially) - Shows overlaid visualization
+            html += '<div id="subtraction-solution-hidden" style="display:none; padding:20px; background:#fff3e0; border-radius:8px; border-left:4px solid #FF9800; margin-top:20px;">';
+            html += '<div style="font-weight:bold; margin-bottom:16px; font-size:1.05rem;">✓ Solution:</div>';
+            html += '<div style="text-align:center; font-size:0.95rem;">';
+            
+            // Show overlaid visualization in solution
+            html += '<div style="margin-bottom:16px;">';
+            html += '<div style="font-size:0.9rem; color:#666; font-weight:600; margin-bottom:12px;">Here\'s what it looks like when we remove the red sections:</div>';
+            
+            // Render the overlaid version in solution
+            const blockWidth = 30;
+            const numBlocks = visual.total.full_blocks + (visual.total.remainder > 0 ? 1 : 0);
+            const gap = 10;
+            const svgWidth = Math.max(50, numBlocks * (blockWidth + gap) + 10);
+            const sectionHeight = 100 / sectionsPerBlock;
+            const blockHeight = 100;
+            
+            let overlayHtml = '<svg width="' + svgWidth + '" height="120" viewBox="0 0 ' + svgWidth + ' 120" style="position:relative; margin: 10px auto; display: block;">';
+            
+            // Draw all sections first - only up to minuend total, but show full blocks with grey padding
+            let sectionIndex = 0;
+            let totalSectionsToShow = data.minuend; // Only show sections up to minuend (Start with amount)
+            
+            for (let b = 0; b < numBlocks; b++) {
+                const x = b * (blockWidth + gap) + 5;
+                overlayHtml += '<g><rect x="' + x + '" y="0" width="' + blockWidth + '" height="' + blockHeight + '" fill="none" stroke="#333" stroke-width="2"/>';
+                
+                for (let s = 0; s < sectionsPerBlock; s++) {
+                    const sy = s * sectionHeight;
+                    let fillColor = '#e8e8e8'; // Grey by default (for unused sections)
+                    
+                    // Only draw sections up to minuend
+                    if (sectionIndex < totalSectionsToShow) {
+                        // Color sections that are being subtracted
+                        if (sectionIndex < data.subtrahend) {
+                            fillColor = '#FF6B6B'; // Red for subtracted
+                        } else {
+                            fillColor = '#4CAF50'; // Green for remaining
+                        }
+                    }
+                    
+                    overlayHtml += '<rect x="' + x + '" y="' + sy + '" width="' + blockWidth + '" height="' + sectionHeight + '" fill="' + fillColor + '" stroke="#333" stroke-width="1"/>';
+                    
+                    sectionIndex++;
+                }
+                overlayHtml += '</g>';
+            }
+            
+            // Add cross pattern to red sections
+            overlayHtml += '<defs>';
+            overlayHtml += '<pattern id="cross-solution" patternUnits="userSpaceOnUse" width="8" height="8">';
+            overlayHtml += '<line x1="0" y1="0" x2="8" y2="8" stroke="rgba(255,255,255,0.7)" stroke-width="1.5"/>';
+            overlayHtml += '<line x1="8" y1="0" x2="0" y2="8" stroke="rgba(255,255,255,0.7)" stroke-width="1.5"/>';
+            overlayHtml += '</pattern>';
+            overlayHtml += '</defs>';
+            
+            // Apply crosses to red sections
+            sectionIndex = 0;
+            for (let b = 0; b < numBlocks; b++) {
+                const x = b * (blockWidth + gap) + 5;
+                for (let s = 0; s < sectionsPerBlock; s++) {
+                    const sy = s * sectionHeight;
+                    if (sectionIndex < data.subtrahend) {
+                        overlayHtml += '<rect x="' + x + '" y="' + sy + '" width="' + blockWidth + '" height="' + sectionHeight + '" fill="url(#cross-solution)" opacity="0.8" rx="1"/>';
+                    }
+                    sectionIndex++;
+                }
+            }
+            
+            overlayHtml += '</svg>';
+            
+            html += overlayHtml;
+            html += '</div>';
+            
+            html += '<div style="margin-top:12px; font-size:0.9rem;">';
+            html += '<div style="margin-bottom:8px;">Started with: <strong>' + data.minuend + '</strong> sections</div>';
+            html += '<div style="margin-bottom:8px;">Removed: <strong>' + data.subtrahend + '</strong> sections (red with ✕)</div>';
+            html += '<div style="margin-bottom:8px;">Remaining: <strong>' + data.answer + '</strong> GREEN sections</div>';
+            html += '</div>';
+            
+            html += '<div style="font-size:1.2rem; font-weight:bold; margin-top:12px; color:#2E7D32;">Answer: ' + data.minuend + ' − ' + data.subtrahend + ' = ' + data.answer + '</div>';
+            html += '</div>';
+            html += '</div>';
+            
+            chartContainer.innerHTML = html;
+            chartContainer.style.display = 'block';
+            chartContainer.style.visibility = 'visible';
+            chartContainer.style.opacity = '1';
+            console.log('[SUBTRACTION-VIZ] ✓ Visualization rendered successfully with separate problem and overlaid solution');
+            return true;
+        } catch (error) {
+            console.error('[SUBTRACTION-VIZ] Error rendering visualization:', error);
+            chartContainer.innerHTML = '<div style="color:red; padding:20px;"><strong>Error:</strong> ' + error.message + '</div>';
+            return false;
+        }
     }
     
     /**
-     * Helper: Render solution blocks showing combined result
+     * Renders Grade 2 Subtraction visualization with 10-section blocks
      */
-    function renderSolutionBlocks(visual, firstNum, secondNum, firstColor, secondColor) {
-        const blockWidth = 30;
-        const blockHeight = 100;
-        const gap = 10;
-        const totalNum = visual.result.total;
-        const numBlocks = Math.ceil(totalNum / 5);
-        const svgWidth = Math.max(80, numBlocks * (blockWidth + gap) + 10);
-        
-        let svg = `<svg width="${svgWidth}" height="120" viewBox="0 0 ${svgWidth} 120" style="margin: 10px auto; display: block;">`;
-        
-        let sectionIndex = 0;
-        
-        for (let b = 0; b < numBlocks; b++) {
-            const x = b * (blockWidth + gap) + 5;
-            svg += `<g><rect x="${x}" y="0" width="${blockWidth}" height="${blockHeight}" fill="none" stroke="#333" stroke-width="2"/>`;
-            
-            for (let s = 0; s < 5; s++) {
-                const sy = s * 20;
-                let fillColor = '#e8e8e8';
-                
-                if (sectionIndex < firstNum) {
-                    fillColor = firstColor; // Green for first number
-                } else if (sectionIndex < totalNum) {
-                    fillColor = secondColor; // Blue for second number
-                }
-                
-                svg += `<rect x="${x}" y="${sy}" width="${blockWidth}" height="20" fill="${fillColor}" stroke="#333" stroke-width="1"/>`;
-                sectionIndex++;
-            }
-            svg += `</g>`;
-        }
-        
-        svg += '</svg>';
-        return svg;
+    function renderGrade2Subtraction(data, chartContainer) {
+        return renderSubtractionVisualization(data, chartContainer, 10); // Grade 2: 10 sections
     }
 
     function loadQuestion(section) {
@@ -655,19 +971,19 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        const apiUrl = `http://127.0.0.1:5000/api/question?section=${section}&grade=${currentGrade}`;
+        const apiUrl = 'http://127.0.0.1:5000/api/question?section=' + section + '&grade=' + currentGrade;
         console.log('[QUESTION] Fetching from:', apiUrl);
         
         fetch(apiUrl)
             .then(res => {
                 console.log('[QUESTION] Response status:', res.status);
                 if (!res.ok) {
-                    throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+                    throw new Error('HTTP ' + res.status + ': ' + res.statusText);
                 }
                 return res.json();
             })
             .then(data => {
-                console.log('[QUESTION] ✓ Received question:', data);
+                console.log('[QUESTION] ✓ Received question');
                 if (!data.question) {
                     throw new Error('No question in response');
                 }
@@ -684,16 +1000,44 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentCorrectAnswer = null;
                 answerFields.innerHTML = '';
                 const chartContainer = document.getElementById('chart-container');
-                chartContainer.innerHTML = '';
-                chartContainer.style.display = 'none';
                 
-                // Grade 1 Addition with block visualization
-                // Grade 1 Addition - Use dedicated function
+                // AGGRESSIVE cleanup: Clear everything from chart container
+                chartContainer.innerHTML = '';
+                chartContainer.textContent = '';
+                chartContainer.style.display = 'none';
+                chartContainer.style.visibility = 'hidden';
+                chartContainer.style.opacity = '0';
+                
+                // Also explicitly hide any stray solution divs
+                const allSolutionDivs = document.querySelectorAll('[id*="addition-solution"]');
+                allSolutionDivs.forEach(div => {
+                    div.style.display = 'none';
+                    div.style.visibility = 'hidden';
+                    div.remove();
+                });
+                
+                // Grade 1 and Grade 2 Addition with block visualization
                 if (currentGrade === 1 && section === 'addition') {
                     console.log('[GRADE1] Rendering Grade 1 Addition visualization');
                     const success = renderGrade1Addition(data, chartContainer);
                     if (!success) {
                         console.error('[GRADE1] Failed to render visualization');
+                        return;
+                    }
+                    answerFields.innerHTML = `<input type="number" id="answer-input" placeholder="Your answer"><span id="admin-answer-display" style="margin-left:12px;color:#666;font-size:0.9rem;"></span>`;
+                } else if (currentGrade === 2 && section === 'addition') {
+                    console.log('[GRADE2] Rendering Grade 2 Addition visualization');
+                    const success = renderGrade2Addition(data, chartContainer);
+                    if (!success) {
+                        console.error('[GRADE2] Failed to render visualization');
+                        return;
+                    }
+                    answerFields.innerHTML = `<input type="number" id="answer-input" placeholder="Your answer"><span id="admin-answer-display" style="margin-left:12px;color:#666;font-size:0.9rem;"></span>`;
+                } else if (currentGrade === 2 && section === 'subtraction') {
+                    console.log('[GRADE2-SUB] Rendering Grade 2 Subtraction visualization');
+                    const success = renderGrade2Subtraction(data, chartContainer);
+                    if (!success) {
+                        console.error('[GRADE2-SUB] Failed to render visualization');
                         return;
                     }
                     answerFields.innerHTML = `<input type="number" id="answer-input" placeholder="Your answer"><span id="admin-answer-display" style="margin-left:12px;color:#666;font-size:0.9rem;"></span>`;
@@ -930,6 +1274,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     sectionSelect.addEventListener('change', (e) => {
+        console.log('[SECTION-CHANGE] User switched from', currentSection, 'to', e.target.value);
         loadQuestion(e.target.value);
     });
 
@@ -977,12 +1322,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 resultDiv.textContent = `Correct! 🎉 (+${points} points)`;
                 currentCorrectAnswer = data.correct_answer;
                 
-                // Show Grade 1 addition solution visualization
-                if (currentGrade === 1 && currentSection === 'addition') {
-                    const solutionDiv = document.getElementById('addition-solution-hidden');
-                    if (solutionDiv) {
-                        solutionDiv.style.display = 'block';
-                    }
+                // Show solution visualization (Grade 1, 2, and future grades)
+                if (currentSection === 'addition') {
+                    revealAdditionSolution(currentGrade, currentSection);
+                } else if (currentSection === 'subtraction') {
+                    revealSubtractionSolution(currentGrade, currentSection);
                 }
                 
                 // Add to session
@@ -1023,12 +1367,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     resultDiv.textContent = `Incorrect. The correct answer is ${JSON.stringify(data.correct_answer)}.`;
                     
-                    // Show Grade 1 addition solution visualization
-                    if (currentGrade === 1 && currentSection === 'addition') {
-                        const solutionDiv = document.getElementById('addition-solution-hidden');
-                        if (solutionDiv) {
-                            solutionDiv.style.display = 'block';
-                        }
+                    // Show solution visualization (Grade 1, 2, and future grades)
+                    if (currentSection === 'addition') {
+                        revealAdditionSolution(currentGrade, currentSection);
+                    } else if (currentSection === 'subtraction') {
+                        revealSubtractionSolution(currentGrade, currentSection);
                     }
                     
                     // Add to session (incorrect answer after max attempts = 0 points)
