@@ -11,8 +11,8 @@ import random
 
 def generate_addition_question():
     """Generate addition question for Grade 6"""
-    a = random.randint(100, 9999)
-    b = random.randint(100, 9999)
+    a = random.randint(1000, 100000)
+    b = random.randint(1000, 100000)
     return {
         'question': f"What is {a} + {b}?",
         'answer': a + b

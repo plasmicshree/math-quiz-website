@@ -1,6 +1,151 @@
 # Development Log
 
-## Session: November 21, 2025
+## Session: November 22, 2025 (Part 2) - Grade 2 Addition Implementation
+
+### Objectives
+1. Implement Grade 2 Addition with SVG blocks (10 sections per block, no weighted distribution)
+2. Eliminate code duplication by creating shared utilities
+3. Make rendering functions configurable for any section count
+
+### Work Completed
+
+#### 1. Created Shared Block Utility Module
+**File**: `backend/grades/block_utils.py` (NEW)
+- Single function: `create_blocks(num, sections_per_block=5)`
+- Works for Grade 1 (5 sections), Grade 2 (10 sections), and future grades
+- Returns: `{full_blocks, remainder, total}`
+- Eliminates duplication between grade files
+
+**Benefits**:
+- ✅ No repeated code across grades
+- ✅ Easy to extend to Grade 3, 4, etc.
+- ✅ Single source of truth for block calculation
+- ✅ Testable and maintainable
+
+#### 2. Refactored Grade 1 Addition
+**File**: `backend/grades/grade_1.py`
+- Removed inline `create_blocks()` function
+- Now imports and uses `block_utils.create_blocks(num, sections_per_block=5)`
+- Weighted distribution (70% easy, 30% hard) unchanged
+- Visual data structure unchanged
+
+#### 3. Enhanced Grade 2 Addition
+**File**: `backend/grades/grade_2.py`
+- Added visual block data to `generate_addition_question()`
+- Uses `block_utils.create_blocks(num, sections_per_block=10)`
+- Returns: `first_number`, `second_number`, `visual` dict
+- No weighted distribution (all problems equally likely)
+- Range: 1-20 each, sum ≤ 30
+
+#### 4. Updated Backend API
+**File**: `backend/app.py` line 275
+- Changed: `elif section == "addition" and grade == 1:`
+- To: `elif section == "addition" and grade in [1, 2]:`
+- Now includes visual data for both Grade 1 and Grade 2 addition
+- Response includes: `visual`, `first_number`, `second_number`
+
+#### 5. Refactored Frontend SVG Rendering
+**File**: `frontend/app.js` (lines 510-793)
+
+**Shared Utilities** (reusable for any grade):
+- `renderBlocksForNumber(numberVisual, color, sectionsPerBlock=5)`
+  - Dynamically calculates section height: `100 / sectionsPerBlock`
+  - Renders full blocks + partial block
+  - Works with 5, 10, 20+ sections per block
+  
+- `renderSolutionBlocks(visual, firstNum, secondNum, firstColor, secondColor, sectionsPerBlock=5)`
+  - Shows combined result with color distribution
+  - First N sections = firstColor, next M sections = secondColor, rest = grey
+  - Dynamically adjusts for any section count
+
+**Grade-Specific Functions**:
+- `renderGrade1Addition(data, chartContainer)` - calls shared functions with `sectionsPerBlock=5`
+- `renderGrade2Addition(data, chartContainer)` - calls shared functions with `sectionsPerBlock=10` (NEW)
+
+#### 6. Updated Frontend Rendering Logic
+**File**: `frontend/app.js` (lines 779-793)
+- Added condition for Grade 2 Addition
+- Maintains separation from Grade 1
+- Both call their respective rendering functions
+- Both handle answer input the same way
+
+### Technical Highlights
+
+**Block Representation (Grade 2)**:
+```
+Grade 2: 15 + 7
+Problem Display:
+[##########] +  [#######]
+[#####]         []
+
+Solution (10-section blocks):
+[##########] [##########]  (20 total)
+[#######][][][][] (green=15, blue=7, grey=0)
+```
+
+**Shared Function Usage**:
+```javascript
+// Grade 1: 5 sections per block
+renderBlocksForNumber(visual.first, '#4CAF50', 5);
+renderSolutionBlocks(visual, firstNum, secondNum, '#4CAF50', '#2196F3', 5);
+
+// Grade 2: 10 sections per block  
+renderBlocksForNumber(visual.first, '#4CAF50', 10);
+renderSolutionBlocks(visual, firstNum, secondNum, '#4CAF50', '#2196F3', 10);
+
+// Grade 3 (future): 15 sections per block
+renderBlocksForNumber(visual.first, '#4CAF50', 15);
+renderSolutionBlocks(visual, firstNum, secondNum, '#4CAF50', '#2196F3', 15);
+```
+
+### Code Quality Improvements
+
+| Metric | Before | After |
+|--------|--------|-------|
+| **Duplication** | ~40 lines | 0 lines |
+| **Reusability** | Grade 1 only | Works for all grades |
+| **Maintainability** | Add Grade 2 = copy Grade 1 | Add Grade 2 = 1 new file |
+| **Extensibility** | Limited | Easy to add Grade 3+ |
+| **Functions** | 3 (Grade 1 only) | 2 shared + 2 specific |
+
+### Files Modified
+1. ✅ `backend/grades/block_utils.py` (NEW - 25 lines)
+2. ✅ `backend/grades/grade_1.py` (refactored - 5 → 10 sections parameter)
+3. ✅ `backend/grades/grade_2.py` (enhanced - added visual blocks)
+4. ✅ `backend/app.py` (updated - Grade 1+2 support)
+5. ✅ `frontend/app.js` (refactored - 2 shared + 2 specific functions, ~200 lines)
+6. ✅ `GRADE_2_IMPLEMENTATION.md` (NEW - detailed documentation)
+
+### Testing Status
+- ✅ Backend: Python syntax verified
+- ✅ Backend: Grade 2 question generation ready
+- ⏳ Frontend: Grade 2 visualization ready for testing
+- ⏳ Integration: Both servers needed to test end-to-end
+
+### Key Achievements
+- ✅ **Zero Code Duplication**: Shared utilities eliminate copy-paste
+- ✅ **Configurable Architecture**: Section count as parameter
+- ✅ **Grade Isolation**: Each grade independent but uses common utilities
+- ✅ **Future-Proof**: Easy to add Grade 3, 4, 5 with same pattern
+- ✅ **DRY Principle**: Don't Repeat Yourself fully applied
+
+### Next Steps (In Order)
+1. Test Grade 2 Addition with 10-section blocks
+2. Verify backend API returns correct visual data
+3. Verify frontend rendering works correctly
+4. Test solution reveal on correct/max attempts
+5. Commit to main branch
+6. Plan Grade 2 Subtraction implementation
+
+### Notes
+- No weighted distribution for Grade 2 (unlike Grade 1's 70/30)
+- Both grades use identical visual structure, just different section counts
+- Future grades (3, 4, 6) can reuse same pattern
+- API contract stable: `{visual, first_number, second_number, answer}`
+
+---
+
+## Session: November 22, 2025 (Part 1) - Server Setup & Fresh Start
 
 ### Initial State
 - Had basic math quiz working for grades 1-6

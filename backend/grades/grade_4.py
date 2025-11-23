@@ -10,8 +10,8 @@ import random
 
 def generate_addition_question():
     """Generate addition question for Grade 4"""
-    a = random.randint(1, 99)
-    b = random.randint(1, 99)
+    a = random.randint(50, 1000)
+    b = random.randint(50, 1000)
     return {
         'question': f"What is {a} + {b}?",
         'answer': a + b
