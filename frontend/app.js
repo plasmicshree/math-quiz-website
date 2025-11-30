@@ -1052,6 +1052,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     answerFields.innerHTML = `<input type="number" id="answer-input" placeholder="Your answer"><span id="admin-answer-display" style="margin-left:12px;color:#666;font-size:0.9rem;"></span>`;
                 } else if (section === 'division') {
+                    console.log('[DIVISION] Rendering division explanation', data);
                     // Create division explanation panel
                     let divisionHtml = '<div style="padding:16px;font-size:0.95rem;line-height:1.6;">';
                     divisionHtml += '<div style="font-weight:600;font-size:1.1rem;margin-bottom:12px;">📚 Understanding Division</div>';
@@ -1083,6 +1084,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     chartContainer.innerHTML = divisionHtml;
                     chartContainer.style.display = 'block';
+                    chartContainer.style.visibility = 'visible';
+                    chartContainer.style.opacity = '1';
+                    console.log('[DIVISION] Division HTML set to chartContainer, display:', chartContainer.style.display);
                     
                     answerFields.innerHTML = `
                         <input type="number" id="quotient-input" placeholder="Quotient">
@@ -1250,6 +1254,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     explanationHtml += '</div>';
                     chartContainer.innerHTML = explanationHtml;
                     chartContainer.style.display = 'block';
+                    chartContainer.style.visibility = 'visible';
+                    chartContainer.style.opacity = '1';
                     answerFields.innerHTML = `<input type="number" id="answer-input" placeholder="Your answer" step="0.01"><span id="admin-answer-display" style="margin-left:12px;color:#666;font-size:0.9rem;"></span>`;
                 } else if (section === 'charts' && data.chart && data.sub_questions) {
                     let chartHtml = '';
@@ -1268,6 +1274,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     chartHtml += '</tr></table>';
                     chartContainer.innerHTML = chartHtml;
                     chartContainer.style.display = 'block';
+                    chartContainer.style.visibility = 'visible';
+                    chartContainer.style.opacity = '1';
                     let questionsHtml = '<div id="chart-questions">';
                     data.sub_questions.forEach((q, i) => {
                         questionsHtml += `<div style="margin-bottom:8px;"><label style="font-size:1rem;">${q}</label><br><input type="text" id="chart-answer-${i}" class="chart-answer-input" placeholder="Your answer"><span id="admin-answer-display-${i}" style="margin-left:12px;color:#666;font-size:0.9rem;"></span></div>`;
