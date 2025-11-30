@@ -1,5 +1,5 @@
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 import random
 import uuid
@@ -338,6 +338,24 @@ def get_answer():
     if correct_answer is not None:
         return jsonify({"answer": correct_answer})
     return jsonify({"error": "Question not found"}), 404
+
+# Serve frontend static files
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_frontend(path):
+    """Serve frontend files from the frontend directory"""
+    frontend_dir = os.path.join(os.path.dirname(__file__), '..', 'frontend')
+    
+    # If path is empty or requesting a file without extension, serve index.html
+    if not path or '.' not in path.split('/')[-1]:
+        return send_from_directory(frontend_dir, 'index.html')
+    
+    # Try to serve the requested file
+    if os.path.exists(os.path.join(frontend_dir, path)):
+        return send_from_directory(frontend_dir, path)
+    
+    # If file doesn't exist, serve index.html (for SPA routing)
+    return send_from_directory(frontend_dir, 'index.html')
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
