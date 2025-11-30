@@ -8,7 +8,7 @@
 
 A grade-based interactive math quiz application supporting grades 1-6 with dynamic question generation, visual explanations, and instant feedback.
 
-**Current Version**: [v1.0.0](CHANGELOG.md) - Production Ready ✅
+**Current Version**: [v1.0.1](CHANGELOG.md) - Production Ready ✅
 
 ## 🚀 Live Application
 
