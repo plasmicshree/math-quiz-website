@@ -8,6 +8,12 @@
 
 A grade-based interactive math quiz application supporting grades 1-6 with dynamic question generation, visual explanations, and instant feedback.
 
+## 🚀 Live Application
+
+**[Math Quiz Website](https://math-quiz-website-ksfl.onrender.com/)** - Visit the live app!
+
+Deployed on [Render](https://render.com/) with auto-deployment on every push to main branch.
+
 ## Project Structure
 
 ```
@@ -92,16 +98,33 @@ math_quiz_website/
 
 ## Running the Application
 
-### Backend (Flask Server)
+### Live Deployment
+Visit the live app: **https://math-quiz-website-ksfl.onrender.com/**
+
+### Local Development
+
+**Backend (Flask Server)**
 ```bash
 cd backend
-export FLASK_APP=app.py
+poetry install
 poetry run flask run
 ```
 Server: `http://127.0.0.1:5000`
 
-### Frontend
-Open `frontend/index.html` in any browser
+**Frontend (HTTP Server)**
+```bash
+cd frontend
+python -m http.server 8000
+```
+Access: `http://localhost:8000`
+
+### Alternative - Backend serves Frontend
+The backend Flask server can serve the frontend files directly:
+```bash
+cd backend
+poetry run flask run
+```
+Then visit: `http://127.0.0.1:5000`
 
 ## API Reference
 
@@ -148,7 +171,18 @@ Open `frontend/index.html` in any browser
 ### `POST /api/get_answer` (Admin)
 Returns correct answer for testing.
 
-## Recent Development Session (Nov 21, 2025)
+## Recent Development Sessions
+
+### Latest (Nov 30, 2025) - Deployment & Rendering Fixes
+- ✅ Fixed chart-container visibility issue for Division, Fractions, and Charts sections
+- ✅ Added proper CSS visibility and opacity properties to override `display: none` default
+- ✅ Deployed backend to Render Web Service
+- ✅ Configured environment auto-detection (localhost vs production)
+- ✅ Live app now available at https://math-quiz-website-ksfl.onrender.com/
+- ✅ Grade 4 Division explanation panel now rendering correctly
+- ✅ Grade 5 Charts and Grade 6 Fractions ready for testing
+
+### Previous Session (Nov 21, 2025)
 
 ### Issues Fixed
 1. ✅ Fraction SVGs not displaying for Grade 5
@@ -259,7 +293,9 @@ ID,Template,Category,Emoji
 ---
 
 **Status**: Production-ready ✅  
-**Last Updated**: November 21, 2025  
-**Python Version**: 3.10+  
-**Flask Version**: Latest
+**Live App**: https://math-quiz-website-ksfl.onrender.com/  
+**Last Updated**: November 30, 2025  
+**Python Version**: 3.8+  
+**Flask Version**: 3.0.3+  
+**Deployment**: Render Web Service with auto-deployment
 
