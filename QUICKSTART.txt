@@ -1,0 +1,51 @@
+🚀 QUICK START - Math Quiz Website
+====================================
+
+⚠️  CRITICAL: ALWAYS USE TWO SEPARATE TERMINALS!
+
+Terminal 1 - BACKEND:
+  cd e:\math_webpage\math_quiz_website; .venv\Scripts\Activate.ps1; cd backend; python app.py
+  → http://127.0.0.1:5000
+  (Look for: "Loaded 50 addition templates" + "Running on http://127.0.0.1:5000")
+
+Terminal 2 - FRONTEND:
+  cd e:\math_webpage\math_quiz_website; .venv\Scripts\Activate.ps1; cd frontend; python -m http.server 8000
+  → http://localhost:8000 (open in browser)
+  (Look for: "Serving HTTP on :: port 8000")
+
+Terminal 3+ - GIT/COMMANDS:
+  cd e:\math_webpage\math_quiz_website
+  git status, git commit, etc.
+
+📍 Current Branch: feature/grade-1-subtraction
+📚 Full Docs: docs/README.md
+📖 Server Guide: docs/operations/SERVER_STARTUP_GUIDE.md
+⚡ Getting Started: docs/operations/GETTING_STARTED.md
+
+✅ Latest Implementation (Grade 4 Division - Nov 23, 2025):
+   - Grade 1: Addition & Subtraction with 5-section visual blocks ✓
+   - Grade 2: Addition & Subtraction with 10-section visual blocks ✓
+   - Grade 3: Multiplication with text-based math ✓
+   - Grade 4: Division with visual cookie grouping strategy ✓ NEW!
+   - Grades 5-6: Advanced operations, Fractions, Charts ✓
+   - Documentation: Fully organized in docs/ folder ✓
+   - Backend: Flask API on port 5000 with auto-reload ✓
+   - Frontend: Python HTTP server on port 8000 ✓
+   - Session Management: Auto-clears on startup for fresh testing ✓
+
+🔍 Test Grade 4 Division:
+   1. Start both servers (Terminal 1 & 2)
+   2. Open http://localhost:8000 in browser
+   3. Select "Grade 4" from dropdown
+   4. Select "Division"
+   5. Verify: Shows problem like "19 ÷ 3 = ?"
+   6. Verify: SVG shows 19 cookies grouped into 3 sets with remainder
+   7. Enter quotient (6) and remainder (1)
+   8. On correct answer: Shows verification formula (6 × 3) + 1 = 19 ✓
+
+🗑️ Clear Session History:
+   - Automatic: NO - user data is preserved on page reload
+   - Manual Hard Reset: Visit http://localhost:8000/clear-session.html
+   - Options: Clear user info only, or hard reset everything
+   - For developers: Edit frontend/app.js line 4 to enable auto-clear
+
