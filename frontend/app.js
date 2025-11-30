@@ -227,6 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const scoreValue = document.getElementById('score-value');
     let isAdminMode = false;
     let currentCorrectAnswer = null;
+    let lastSubmittedAnswer = null; // Track last answer to prevent duplicate submissions
 
     // Restore saved grade BEFORE authentication check (needed for enableApp -> updateAvailableSections)
     const savedGrade = localStorage.getItem('mathQuizGrade');
@@ -1288,6 +1289,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 answerInput = document.getElementById('answer-input') || document.getElementById('quotient-input');
                 resultDiv.textContent = '';
                 attemptCount = 0;
+                lastSubmittedAnswer = null; // Reset tracked answer for new question
                 if (section === 'division') {
                     document.getElementById('quotient-input').disabled = false;
                     document.getElementById('remainder-input').disabled = false;
@@ -1357,6 +1359,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             userAnswer = Number(answerInput.value);
         }
+        
+        // ✅ Prevent submitting the same wrong answer twice
+        if (lastSubmittedAnswer !== null && JSON.stringify(lastSubmittedAnswer) === JSON.stringify(userAnswer) && attemptCount > 0) {
+            resultDiv.textContent = `You already tried that answer! Please try a different one.`;
+            return;
+        }
+        
+        // Store this answer as the last submitted
+        lastSubmittedAnswer = userAnswer;
+        
         fetch(API_BASE_URL + '/answer', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
