@@ -1050,6 +1050,38 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     answerFields.innerHTML = `<input type="number" id="answer-input" placeholder="Your answer"><span id="admin-answer-display" style="margin-left:12px;color:#666;font-size:0.9rem;"></span>`;
                 } else if (section === 'division') {
+                    // Create division explanation panel
+                    let divisionHtml = '<div style="padding:16px;font-size:0.95rem;line-height:1.6;">';
+                    divisionHtml += '<div style="font-weight:600;font-size:1.1rem;margin-bottom:12px;">📚 Understanding Division</div>';
+                    
+                    divisionHtml += '<div style="margin-bottom:16px;">';
+                    divisionHtml += '<div style="margin-bottom:8px;"><strong>What is Division?</strong></div>';
+                    divisionHtml += '<div style="margin-bottom:12px;">Division is sharing or grouping items equally. We divide a larger number (dividend) into groups based on another number (divisor).</div>';
+                    divisionHtml += '</div>';
+                    
+                    divisionHtml += '<div style="background:#f0f4ff;padding:12px;border-radius:4px;margin-bottom:16px;border-left:4px solid #2196F3;">';
+                    divisionHtml += '<div style="margin-bottom:8px;"><strong>Key Terms:</strong></div>';
+                    divisionHtml += '<ul style="margin:0;padding-left:20px;">';
+                    divisionHtml += '<li><strong>Dividend:</strong> The number being divided (shared)</li>';
+                    divisionHtml += '<li><strong>Divisor:</strong> How many groups or items per group</li>';
+                    divisionHtml += '<li><strong>Quotient:</strong> The answer - how many in each group</li>';
+                    divisionHtml += '<li><strong>Remainder:</strong> What\'s left over after equal sharing</li>';
+                    divisionHtml += '</ul>';
+                    divisionHtml += '</div>';
+                    
+                    divisionHtml += '<div><strong>Example:</strong> 17 ÷ 5</div>';
+                    divisionHtml += '<ul style="margin:8px 0;padding-left:20px;">';
+                    divisionHtml += '<li>17 cookies (dividend)</li>';
+                    divisionHtml += '<li>Share among 5 friends (divisor)</li>';
+                    divisionHtml += '<li>Each friend gets 3 cookies (quotient)</li>';
+                    divisionHtml += '<li>2 cookies left over (remainder)</li>';
+                    divisionHtml += '</ul>';
+                    divisionHtml += '<div style="margin-top:8px;font-weight:600;">17 ÷ 5 = 3 remainder 2</div>';
+                    divisionHtml += '</div>';
+                    
+                    chartContainer.innerHTML = divisionHtml;
+                    chartContainer.style.display = 'block';
+                    
                     answerFields.innerHTML = `
                         <input type="number" id="quotient-input" placeholder="Quotient">
                         <input type="number" id="remainder-input" placeholder="Remainder" style="margin-left:8px;">
