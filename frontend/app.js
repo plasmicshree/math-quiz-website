@@ -992,6 +992,8 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .then(data => {
                 console.log('[QUESTION] ✓ Received question');
+                console.log('[DEBUG] Full data object:', data);
+                console.log('[DEBUG] Section:', section, 'Has chart:', !!data.chart, 'Has sub_questions:', !!data.sub_questions);
                 if (!data.question) {
                     throw new Error('No question in response');
                 }

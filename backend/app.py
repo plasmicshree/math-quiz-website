@@ -277,6 +277,13 @@ def get_question():
         elif section == "fractions":
             resp["fraction_visual"] = q.get("fraction_visual")
             resp["fraction"] = q.get("fraction")
+        elif section == "division":
+            # Include division visual data for Grade 4
+            resp["visual"] = q.get("visual")
+            resp["dividend"] = q.get("dividend")
+            resp["divisor"] = q.get("divisor")
+            resp["quotient"] = q.get("quotient")
+            resp["remainder"] = q.get("remainder")
         elif section == "addition" and grade in [1, 2]:
             # Include visual blocks data for Grade 1 and Grade 2 addition
             resp["visual"] = q.get("visual")

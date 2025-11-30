@@ -42,7 +42,17 @@ def generate_division_question():
     dividend = divisor * quotient
     return {
         'question': f"What is {dividend} ÷ {divisor}? Enter quotient and remainder.",
-        'answer': {'quotient': quotient, 'remainder': 0}
+        'dividend': dividend,
+        'divisor': divisor,
+        'quotient': quotient,
+        'remainder': 0,
+        'answer': {'quotient': quotient, 'remainder': 0},
+        'visual': {
+            'dividend': dividend,
+            'divisor': divisor,
+            'quotient': quotient,
+            'remainder': 0
+        }
     }
 
 QUESTION_GENERATORS = {
