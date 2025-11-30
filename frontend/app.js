@@ -971,7 +971,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        const apiUrl = 'http://127.0.0.1:5000/api/question?section=' + section + '&grade=' + currentGrade;
+        const apiUrl = 'https://math-quiz-website-ksfl.onrender.com/api/question?section=' + section + '&grade=' + currentGrade;
         console.log('[QUESTION] Fetching from:', apiUrl);
         
         fetch(apiUrl)
@@ -1252,7 +1252,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 nextBtn.disabled = true;
                 
                 if (isAdminMode) {
-                    fetch('http://127.0.0.1:5000/api/get_answer', {
+                    fetch('https://math-quiz-website-ksfl.onrender.com/api/get_answer', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ id: currentQuestionId })
@@ -1307,7 +1307,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             userAnswer = Number(answerInput.value);
         }
-        fetch('http://127.0.0.1:5000/api/answer', {
+        fetch('https://math-quiz-website-ksfl.onrender.com/api/answer', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: currentQuestionId, answer: userAnswer })
