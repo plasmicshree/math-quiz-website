@@ -50,6 +50,52 @@ cd e:\math_webpage\math_quiz_website; .venv\Scripts\Activate.ps1; cd frontend; p
 - Grade 5/6 additional improvements
 - More word problem templates
 
+### 4b. VERSION CONTROL WORKFLOW (Nov 30, 2025) ⭐ IMPORTANT
+**CURRENT VERSION:** v1.0.0 (Production Release)
+
+**Files to maintain version control:**
+- `VERSION` - Contains current version (e.g., "1.0.0")
+- `CHANGELOG.md` - Complete release history and features
+- `VERSION_CONTROL_GUIDE.md` - How to manage releases (beginner guide)
+- Git tags: Use `git tag -a v1.0.0 -m "description"`
+
+**AUTOMATIC REMINDER WHEN RELEASING NEW VERSION:**
+When user wants to deploy new feature (v1.1.0, v1.2.0, etc.), ALWAYS ask them to:
+
+1. **Update VERSION file**
+   ```
+   Change: 1.0.0 → 1.1.0
+   ```
+
+2. **Update CHANGELOG.md**
+   - Add new section at TOP with format:
+   ```markdown
+   ## [1.1.0] - YYYY-MM-DD
+   ### ✨ Added
+   - Feature 1
+   ### 🐛 Fixed
+   - Bug 1
+   ```
+
+3. **Commit version files**
+   ```bash
+   git add VERSION CHANGELOG.md
+   git commit -m "Release v1.1.0 - Description here"
+   ```
+
+4. **Create Git tag**
+   ```bash
+   git tag -a v1.1.0 -m "Release version 1.1.0 - Description"
+   git push origin main --tags
+   ```
+
+**Semantic Versioning Reminder:**
+- PATCH (1.0.1): Bug fixes only
+- MINOR (1.1.0): New features
+- MAJOR (2.0.0): Breaking changes
+
+**Reference:** See `VERSION_CONTROL_GUIDE.md` for detailed workflow
+
 ### 5. Grade 4 Division Implementation Details
 **Backend (`backend/grades/grade_4.py`):**
 - `generate_division_question()`: Returns question with visual data
@@ -140,10 +186,20 @@ docs/
 ```
 
 ### 9. Current Branch & Status
-- **Branch:** feature/grade-1-subtraction
-- **Remote:** origin/feature/grade-1-subtraction  
+- **Branch:** main
+- **Remote:** origin/main  
 - **Status:** All changes committed and pushed
-- **Last Commit:** 39bd9a6 - "feat: Complete Grade 2 Addition & Subtraction with visual blocks, update difficulty ranges"
+- **Current Version:** v1.0.0 (Production Release)
+- **Last Commit:** 3aab983 - "docs: Add version control system and release notes for v1.0.0"
+- **Last Tag:** v1.0.0 (Nov 30, 2025)
+
+**Recent Changes (Nov 30, 2025):**
+- ✅ Fixed chart-container visibility issue for Division, Fractions, Charts sections
+- ✅ Moved Save Session and View History buttons to center section (below Next button)
+- ✅ Added duplicate answer prevention (users can't submit same wrong answer twice)
+- ✅ Created version control system (VERSION, CHANGELOG.md, VERSION_CONTROL_GUIDE.md)
+- ✅ Created v1.0.0 release tag with full feature documentation
+- ✅ Updated README with version badge
 
 ### 10. Common Tasks & Locations
 
