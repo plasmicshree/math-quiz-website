@@ -19,6 +19,14 @@ if (firebaseConfig && typeof firebase !== 'undefined') {
   console.log('ℹ Firebase not configured - using localStorage for session persistence');
 }
 
+// Determine API base URL based on environment
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://127.0.0.1:5000/api'
+  : 'https://math-quiz-website-ksfl.onrender.com/api';
+
+console.log('🌍 Environment:', window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'LOCAL' : 'PRODUCTION');
+console.log('📡 API Base URL:', API_BASE_URL);
+
 // Session tracking
 let currentSessionId = null;
 let currentSessionData = {
@@ -971,7 +979,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        const apiUrl = 'https://math-quiz-website-ksfl.onrender.com/api/question?section=' + section + '&grade=' + currentGrade;
+        const apiUrl = API_BASE_URL + '/question?section=' + section + '&grade=' + currentGrade;
         console.log('[QUESTION] Fetching from:', apiUrl);
         
         fetch(apiUrl)
@@ -1252,7 +1260,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 nextBtn.disabled = true;
                 
                 if (isAdminMode) {
-                    fetch('https://math-quiz-website-ksfl.onrender.com/api/get_answer', {
+                    fetch(API_BASE_URL + '/get_answer', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ id: currentQuestionId })
@@ -1307,7 +1315,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             userAnswer = Number(answerInput.value);
         }
-        fetch('https://math-quiz-website-ksfl.onrender.com/api/answer', {
+        fetch(API_BASE_URL + '/answer', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: currentQuestionId, answer: userAnswer })
